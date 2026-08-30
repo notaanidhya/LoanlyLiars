@@ -98,8 +98,8 @@ class SurvivalAnalyzer:
 
         km_rows = []
         for t in checkpoints:
-            def_s = float(def_sf[def_sf.index <= t].iloc[-1]) if (def_sf.index <= t).any() else 1.0
-            pre_s = float(pre_sf[pre_sf.index <= t].iloc[-1]) if (pre_sf.index <= t).any() else 1.0
+            def_s = float(def_sf[def_sf.index <= t].iloc[-1].values[0]) if (def_sf.index <= t).any() else 1.0
+            pre_s = float(pre_sf[pre_sf.index <= t].iloc[-1].values[0]) if (pre_sf.index <= t).any() else 1.0
             km_rows.append({
                 "month": t,
                 "default_survival_prob": round(def_s, 4),

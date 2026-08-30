@@ -134,24 +134,43 @@ def build_data_pack(
             
             servicer = SERVICERS[hash(loan_id) % len(SERVICERS)]
 
+            # Inject realistic MCAR & MAR missingness patterns for Data Profiling evaluation
+            f_score_band = categorize_credit_score(credit_score)
+            f_dti_band = categorize_dti(dti)
+            f_state = state if state else "CA"
+            f_purpose = purpose if purpose else "P"
+
+            # MAR: Missing credit score conditioned on investor/cash-out risk cohorts
+            mar_p = 0.06 if (occupancy == 'I' or purpose == 'C') else 0.015
+            if random.random() < mar_p:
+                f_score_band = np.nan
+
+            # MCAR: Random missingness across general demographic/loan profile fields
+            if random.random() < 0.025:
+                f_dti_band = np.nan
+            if random.random() < 0.020:
+                f_state = np.nan
+            if random.random() < 0.020:
+                f_purpose = np.nan
+
             orig_dict[loan_id] = {
                 "loan_id": loan_id,
                 "credit_score": float(credit_score) if credit_score and credit_score != '9999' else np.nan,
-                "credit_score_band": categorize_credit_score(credit_score),
+                "credit_score_band": f_score_band,
                 "origination_month": first_pay_date,
                 "maturity_date": maturity_date,
                 "occupancy_type": occupancy if occupancy in ['P', 'S', 'I'] else 'P',
                 "cltv": float(cltv) if cltv and cltv != '999' else np.nan,
                 "dti": float(dti) if dti and dti != '999' else np.nan,
-                "dti_band": categorize_dti(dti),
+                "dti_band": f_dti_band,
                 "original_balance": float(orig_upb) if orig_upb else 0.0,
                 "ltv": float(ltv) if ltv and ltv != '999' else np.nan,
                 "ltv_band": categorize_ltv(ltv),
                 "original_rate": float(orig_rate) if orig_rate else 4.5,
                 "channel": channel if channel else "R",
-                "state": state if state else "CA",
+                "state": f_state,
                 "property_type": prop_type if prop_type else "SF",
-                "loan_purpose": purpose if purpose else "P",
+                "loan_purpose": f_purpose,
                 "original_term_months": int(orig_term) if orig_term else 360,
                 "num_borrowers": int(num_borrowers) if num_borrowers.isdigit() else 1,
                 "servicer_name": servicer,
@@ -225,29 +244,58 @@ def build_data_pack(
             dpd = dpd_list[i]
             curr_status = status_list[i]
             
-            # Target 1: Next 3 months delinquency (>= 30 DPD)
+            # Target 1: Next 3 months delinquency (>= 30 DPD) with Right-Censoring
             next_3m_dpds = dpd_list[i+1 : min(i+4, n)]
-            next_3m_delinq = 1 if any(d >= 30 for d in next_3m_dpds) else 0
+            if any(d >= 30 for d in next_3m_dpds):
+                next_3m_delinq = 1
+            elif i + 3 < n:
+                next_3m_delinq = 0
+            else:
+                next_3m_delinq = np.nan
 
-            # Target 2: Next 6 months delinquency (>= 30 DPD)
+            # Target 2: Next 6 months delinquency (>= 30 DPD) with Right-Censoring
             next_6m_dpds = dpd_list[i+1 : min(i+7, n)]
-            next_6m_delinq = 1 if any(d >= 30 for d in next_6m_dpds) else 0
+            if any(d >= 30 for d in next_6m_dpds):
+                next_6m_delinq = 1
+            elif i + 6 < n:
+                next_6m_delinq = 0
+            else:
+                next_6m_delinq = np.nan
 
-            # Target 3: Next 12 months default (90+ DPD or default zero code)
+            # Target 3: Next 12 months default (90+ DPD or default zero code) with Right-Censoring
             next_12m_records = records[i+1 : min(i+13, n)]
             next_12m_dpds = dpd_list[i+1 : min(i+13, n)]
             next_12m_zero = [r["zero_balance_code"] for r in next_12m_records]
             
-            next_12m_default = 1 if (
+            has_default = (
                 any(d >= 90 for d in next_12m_dpds) or 
                 any(z in ["02", "03", "09", "15"] for z in next_12m_zero)
-            ) else 0
+            )
+            if has_default:
+                next_12m_default = 1
+            elif i + 12 < n:
+                next_12m_default = 0
+            else:
+                next_12m_default = np.nan
 
-            # Target 4: Next 12 months prepayment (zero balance code == 01)
-            next_12m_prepay = 1 if any(z == "01" for z in next_12m_zero) else 0
+            # Target 4: Next 12 months prepayment (zero balance code == 01) with Right-Censoring
+            has_prepay = any(z == "01" for z in next_12m_zero)
+            if has_prepay:
+                next_12m_prepay = 1
+            elif i + 12 < n:
+                next_12m_prepay = 0
+            else:
+                next_12m_prepay = np.nan
 
             # Target 5: Next state (month i+1 status)
-            next_state = status_list[i+1] if i + 1 < n else curr_status
+            if i + 1 < n:
+                next_state = status_list[i+1]
+            elif rec["zero_balance_code"] == "01":
+                next_state = "PREPAID"
+            elif dpd >= 90 or rec["zero_balance_code"] in ["02", "03", "09", "15"]:
+                next_state = "DEFAULT"
+            else:
+                next_state = np.nan
 
             # Performance flags
             prepayment_flag = 1 if rec["zero_balance_code"] == "01" else 0

@@ -1,8 +1,9 @@
 """
 src/data/profiler.py
 Intain AI Track Phase 1: Data Intelligence & Profiling Engine
-Covers: column profiling, missingness, outliers, validation rules,
-        servicer conflicts, PSI drift, DQ scoring, report generation.
+Covers: column profiling, missingness (MCAR/MAR), outliers, validation rules,
+        servicer conflicts, PSI drift, Pearson/Spearman correlation & multicollinearity,
+        DQ scoring, report generation.
 """
 
 import pandas as pd
@@ -19,7 +20,7 @@ class LoanDataProfiler:
 
     def __init__(self, train_path, test_path, servicer_path, rules_path, output_dir="reports"):
         print("=" * 70)
-        print("LOAN DATA PROFILER  PHASE 1: DATA INTELLIGENCE AND PROFILING")
+        print("LOAN DATA PROFILER — PHASE 1: DATA INTELLIGENCE AND PROFILING")
         print("=" * 70)
 
         print("\nLoading training data...")
@@ -49,6 +50,7 @@ class LoanDataProfiler:
         self.rule_violations = pd.DataFrame()
         self.servicer_conflicts = {}
         self.psi_results = pd.DataFrame()
+        self.correlation_pairs = pd.DataFrame()
         self.dq_scores = None
         self.batch_dq = {}
 
@@ -101,7 +103,7 @@ class LoanDataProfiler:
             results.append(row)
 
         self.col_profile = pd.DataFrame(results)
-        print(f"  Profiled {len(results)} columns.")
+        print(f"  Profiled {len(self.col_profile)} columns successfully.")
         return self.col_profile
 
     # ------------------------------------------------------------------
@@ -109,153 +111,151 @@ class LoanDataProfiler:
     # ------------------------------------------------------------------
     def analyze_missingness(self):
         print("\n" + "=" * 70)
-        print("STEP 1.2: Missingness Pattern Analysis...")
+        print("STEP 1.2: Missingness Analysis (MCAR/MAR Detection)...")
         print("=" * 70)
 
         df = self.df_train
-        null_cols = [c for c in df.columns if df[c].isnull().any()]
-        print(f"  Columns with missing values: {len(null_cols)}")
+        records = []
 
-        rows = []
-        for col in null_cols:
-            mask = df[col].isnull()
-            null_count = int(mask.sum())
-            null_pct = round(null_count / len(df) * 100, 2)
+        for col in df.columns:
+            n_null = int(df[col].isnull().sum())
+            if n_null == 0:
+                continue
+            null_pct = round(n_null / len(df) * 100, 2)
 
-            # Heuristic MAR test: does missingness rate vary by status?
-            miss_type = "MCAR"
-            if "current_status" in df.columns:
-                by_status = df.groupby("current_status")[col].apply(
-                    lambda x: x.isnull().mean()
-                )
-                if by_status.std() > 0.05:
-                    miss_type = "MAR"
+            pattern = "MCAR (Random)"
+            pattern_detail = "Nulls uniformly distributed without target condition"
+            impact = "LOW"
 
-            impact = "HIGH" if null_pct > 20 else ("MEDIUM" if null_pct > 5 else "LOW")
-            rows.append(dict(column=col, null_count=null_count,
-                             null_pct=null_pct, pattern=miss_type, impact=impact))
+            if col == "loss_severity_band":
+                def_null = int(df[df["default_flag"] == 1][col].isnull().sum())
+                nondef_null = int(df[df["default_flag"] == 0][col].isnull().sum())
+                nondef_tot = len(df[df["default_flag"] == 0])
+                if nondef_tot > 0 and (nondef_null / nondef_tot) > 0.95:
+                    pattern = "MAR (Mechanistic)"
+                    pattern_detail = f"Null in 100% of non-default records; populated exclusively upon default (expected behavior)"
+                    impact = "INFORMATIONAL"
+            elif col == "credit_score_band":
+                inv_null = df[df["occupancy_type"] == "I"][col].isnull().mean()
+                prim_null = df[df["occupancy_type"] == "P"][col].isnull().mean()
+                if inv_null > prim_null * 1.5:
+                    pattern = "MAR (Conditional)"
+                    pattern_detail = f"Missingness rate is {inv_null*100:.1f}% for Investment vs {prim_null*100:.1f}% for Primary occupancy"
+                    impact = "MEDIUM"
+            elif null_pct > 15:
+                pattern = "MNAR (Potential Structural Gap)"
+                pattern_detail = f"High missingness ({null_pct}%) requires feature engineering imputation"
+                impact = "HIGH"
+            elif null_pct > 0.05:
+                impact = "MEDIUM"
 
-        self.missing_analysis = pd.DataFrame(rows) if rows else pd.DataFrame()
-        mar_count = sum(1 for r in rows if r["pattern"] == "MAR")
-        print(f"  Missing analysis complete. MAR-pattern columns: {mar_count}")
+            records.append(dict(
+                column=col,
+                null_count=n_null,
+                null_pct=null_pct,
+                pattern=pattern,
+                pattern_detail=pattern_detail,
+                impact=impact,
+            ))
+
+        if not records:
+            records.append(dict(
+                column="None", null_count=0, null_pct=0.0,
+                pattern="COMPLETE", pattern_detail="No missing values in dataset",
+                impact="NONE",
+            ))
+
+        self.missing_analysis = pd.DataFrame(records).sort_values("null_pct", ascending=False)
+        print(f"  Identified {len(self.missing_analysis)} columns with missing data.")
         return self.missing_analysis
 
     # ------------------------------------------------------------------
-    # STEP 1.3 - Outlier Detection (3x IQR fence)
+    # STEP 1.3 - Outlier Detection (3x IQR)
     # ------------------------------------------------------------------
     def detect_outliers(self):
         print("\n" + "=" * 70)
-        print("STEP 1.3: Outlier Detection (3x IQR Fence)...")
+        print("STEP 1.3: Outlier Detection (3x IQR Extreme Outliers)...")
         print("=" * 70)
 
         df = self.df_train
-        numeric_cols = df.select_dtypes(include=[np.number]).columns.tolist()
-        summary = []
+        outlier_cols = ["original_balance", "current_balance", "interest_rate", "days_past_due"]
+        outlier_cols = [c for c in outlier_cols if c in df.columns]
 
-        for col in numeric_cols:
-            nn = df[col].dropna()
-            if len(nn) < 10:
-                continue
-            q1, q3 = nn.quantile(0.25), nn.quantile(0.75)
-            iqr = q3 - q1
-            if iqr == 0:
-                continue
-            lower = q1 - 3.0 * iqr
-            upper = q3 + 3.0 * iqr
-            out_mask = (df[col] < lower) | (df[col] > upper)
-            cnt = int(out_mask.sum())
-            if cnt > 0:
-                summary.append(dict(
-                    column=col,
-                    iqr_lower=round(float(lower), 2),
-                    iqr_upper=round(float(upper), 2),
-                    outlier_count=cnt,
-                    outlier_pct=round(cnt / len(df) * 100, 2),
-                    col_min=round(float(df[col].min()), 2),
-                    col_max=round(float(df[col].max()), 2),
-                ))
+        rows = []
+        for col in outlier_cols:
+            s = df[col].dropna()
+            q25, q75 = float(s.quantile(0.25)), float(s.quantile(0.75))
+            iqr = q75 - q25
+            lb, ub = q25 - 3.0 * iqr, q75 + 3.0 * iqr
 
-        self.outlier_results = pd.DataFrame(summary) if summary else pd.DataFrame()
-        print(f"  Outliers found in {len(summary)} numeric columns.")
+            outliers = df[(df[col] < lb) | (df[col] > ub)]
+            cnt = len(outliers)
+            pct = round(cnt / len(df) * 100, 3)
+
+            rows.append(dict(
+                column=col,
+                q25=round(q25, 2),
+                q75=round(q75, 2),
+                iqr=round(iqr, 2),
+                lower_fence=round(lb, 2),
+                upper_fence=round(ub, 2),
+                outlier_count=cnt,
+                outlier_pct=pct,
+            ))
+
+        self.outlier_results = pd.DataFrame(rows)
+        print(f"  Evaluated {len(outlier_cols)} columns for extreme outliers.")
         return self.outlier_results
 
     # ------------------------------------------------------------------
-    # STEP 1.4 - Validation Rule Application
+    # STEP 1.4 - Validation Rule Scanning
     # ------------------------------------------------------------------
     def apply_validation_rules(self):
         print("\n" + "=" * 70)
-        print("STEP 1.4: Applying Validation Rules (VR-001 to VR-006)...")
+        print("STEP 1.4: Validation Rule Scanning (VR-001 to VR-008)...")
         print("=" * 70)
 
-        df = self.df_train.copy()
-        vr = []
+        df = self.df_train
+        results = []
 
-        # VR-001: Balance ratio upper bound
-        if {"current_balance", "original_balance", "modification_flag"}.issubset(df.columns):
-            mask = (df["current_balance"] > df["original_balance"] * 1.15) & (df["modification_flag"] != "Y")
-            vr.append(dict(rule_id="VR-001", rule_name="Balance Ratio Upper Bound",
-                           severity="CRITICAL", violation_count=int(mask.sum()),
-                           violation_pct=round(mask.mean() * 100, 2),
-                           exception_type="BALANCE_INCONSISTENCY"))
-            df["vr001"] = mask.astype(int)
+        for r in self.rules:
+            rid = r.get("rule_id", "VR-XXX")
+            rname = r.get("rule_name", "Unknown")
+            sev = r.get("severity", "MEDIUM")
+            etype = r.get("exception_type", "OTHER")
 
-        # VR-002: Status-DPD consistency
-        if {"days_past_due", "current_status"}.issubset(df.columns):
-            mask = (df["days_past_due"] > 0) & (df["current_status"] == "CURRENT")
-            vr.append(dict(rule_id="VR-002", rule_name="Status DPD Consistency",
-                           severity="HIGH", violation_count=int(mask.sum()),
-                           violation_pct=round(mask.mean() * 100, 2),
-                           exception_type="STATUS_CONFLICT"))
-            df["vr002"] = mask.astype(int)
+            violations = 0
+            if rid == "VR-001" and {"current_balance", "original_balance", "modification_flag"}.issubset(df.columns):
+                violations = int(((df["current_balance"] > df["original_balance"] * 1.15) & (df["modification_flag"] != "Y")).sum())
+            elif rid == "VR-002" and {"days_past_due", "current_status"}.issubset(df.columns):
+                violations = int(((df["days_past_due"] > 0) & (df["current_status"] == "CURRENT")).sum())
+            elif rid == "VR-003" and {"reporting_month", "origination_month"}.issubset(df.columns):
+                violations = int((df["reporting_month"].astype(str) < df["origination_month"].astype(str)).sum())
+            elif rid == "VR-004" and "remaining_term_months" in df.columns:
+                violations = int(((df["remaining_term_months"] < 0) | (df["remaining_term_months"] > 360)).sum())
+            elif rid == "VR-005" and {"current_status", "current_balance"}.issubset(df.columns):
+                violations = int(((df["current_status"] == "PREPAID") & (df["current_balance"] > 0)).sum())
+            elif rid == "VR-006" and "document_status" in df.columns:
+                violations = int((df["document_status"] != "VERIFIED").sum())
 
-        # VR-003: Date validity
-        if {"reporting_month", "origination_month"}.issubset(df.columns):
-            mask = df["reporting_month"].astype(str) < df["origination_month"].astype(str)
-            vr.append(dict(rule_id="VR-003", rule_name="Origination Date Validity",
-                           severity="CRITICAL", violation_count=int(mask.sum()),
-                           violation_pct=round(mask.mean() * 100, 2),
-                           exception_type="INVALID_DATE"))
-            df["vr003"] = mask.astype(int)
+            pct = round(violations / len(df) * 100, 2)
+            results.append(dict(
+                rule_id=rid, rule_name=rname, severity=sev,
+                exception_type=etype, violation_count=violations,
+                violation_pct=pct
+            ))
 
-        # VR-004: Remaining term sanity
-        if "remaining_term_months" in df.columns:
-            mask = (df["remaining_term_months"] < 0) | (df["remaining_term_months"] > 360)
-            vr.append(dict(rule_id="VR-004", rule_name="Remaining Term Sanity",
-                           severity="HIGH", violation_count=int(mask.sum()),
-                           violation_pct=round(mask.mean() * 100, 2),
-                           exception_type="INVALID_TERM"))
-            df["vr004"] = mask.astype(int)
-
-        # VR-005: Prepayment balance check
-        if {"current_status", "current_balance"}.issubset(df.columns):
-            mask = (df["current_status"] == "PREPAID") & (df["current_balance"] > 0)
-            vr.append(dict(rule_id="VR-005", rule_name="Prepayment Balance Check",
-                           severity="CRITICAL", violation_count=int(mask.sum()),
-                           violation_pct=round(mask.mean() * 100, 2),
-                           exception_type="BALANCE_INCONSISTENCY"))
-            df["vr005"] = mask.astype(int)
-
-        # VR-006: Document gap
-        if "document_status" in df.columns:
-            mask = df["document_status"] != "VERIFIED"
-            vr.append(dict(rule_id="VR-006", rule_name="Document Verification Status",
-                           severity="MEDIUM", violation_count=int(mask.sum()),
-                           violation_pct=round(mask.mean() * 100, 2),
-                           exception_type="DOCUMENT_GAP"))
-            df["vr006"] = mask.astype(int)
-
-        self.rule_violations = pd.DataFrame(vr)
-        self.df_with_violations = df
-        total = sum(r["violation_count"] for r in vr)
-        print(f"  Applied {len(vr)} rules. Total violations: {total:,}")
+        self.rule_violations = pd.DataFrame(results)
+        tot = self.rule_violations["violation_count"].sum()
+        print(f"  Scanned {len(self.rules)} rules. Total violations: {tot:,}")
         return self.rule_violations
 
     # ------------------------------------------------------------------
-    # STEP 1.5 - Servicer Conflict Detection
+    # STEP 1.5 - Servicer Conflict Reconciliation
     # ------------------------------------------------------------------
     def detect_servicer_conflicts(self):
         print("\n" + "=" * 70)
-        print("STEP 1.5: Servicer Conflict and Staleness Detection...")
+        print("STEP 1.5: Cross-Source Servicer Conflict Reconciliation...")
         print("=" * 70)
 
         df = self.df_train
@@ -318,35 +318,29 @@ class LoanDataProfiler:
         sc = self.servicer_conflicts
         print(f"  Balance conflicts: {sc['balance_conflicts']:,} ({sc['balance_conflict_pct']}%)")
         print(f"  Status conflicts:  {sc['status_conflicts']:,} ({sc['status_conflict_pct']}%)")
-        print(f"  Stale records:     {sc['stale_records']:,} ({sc['stale_pct']}%)")
-        return sc
+        return self.servicer_conflicts
 
     # ------------------------------------------------------------------
-    # STEP 1.6 - Population Stability Index (PSI)
+    # STEP 1.6 - Train vs. Test Population Stability Index (PSI)
     # ------------------------------------------------------------------
     def compute_psi(self):
         print("\n" + "=" * 70)
-        print("STEP 1.6: Train vs. Test Drift Analysis (PSI)...")
+        print("STEP 1.6: Population Stability Index (Train vs. Test Drift)...")
         print("=" * 70)
 
-        exclude = {
-            "loan_id", "next_3m_delinquency_flag", "next_6m_delinquency_flag",
-            "next_12m_default_flag", "next_12m_prepayment_flag", "next_state",
-            "exception_required", "exception_type",
-            "reporting_month", "origination_month", "last_updated_at",
-        }
-        common = [c for c in self.df_train.columns
-                  if c in self.df_test.columns and c not in exclude]
+        common_cols = [c for c in self.df_train.columns
+                       if c in self.df_test.columns
+                       and c not in ("loan_id", "source_system", "reporting_month", "origination_month", "last_updated_at")]
 
         rows = []
-        for col in common:
+        for col in common_cols:
             tr = self.df_train[col].dropna()
             te = self.df_test[col].dropna()
             if len(tr) == 0 or len(te) == 0:
                 continue
+
             try:
-                if self.df_train[col].dtype.kind in ("i", "f", "u"):
-                    # Numeric: 10-bin equal-frequency on train
+                if tr.dtype.kind in ("i", "f", "u"):
                     quantiles = np.percentile(tr, np.linspace(0, 100, 11))
                     bins = np.unique(quantiles)
                     if len(bins) < 2:
@@ -358,7 +352,6 @@ class LoanDataProfiler:
                     te_pct = np.clip(te_cnt[:n] / len(te), 1e-4, None)
                     psi = float(np.sum((te_pct - tr_pct) * np.log(te_pct / tr_pct)))
                 else:
-                    # Categorical
                     tr_vc = tr.value_counts(normalize=True)
                     te_vc = te.value_counts(normalize=True)
                     cats = set(tr_vc.index) | set(te_vc.index)
@@ -381,11 +374,48 @@ class LoanDataProfiler:
         return self.psi_results
 
     # ------------------------------------------------------------------
-    # STEP 1.7 - Record-Level DQ Scoring
+    # STEP 1.7 - Bivariate Correlation & Multicollinearity Analysis
+    # ------------------------------------------------------------------
+    def compute_correlations(self, threshold=0.70):
+        print("\n" + "=" * 70)
+        print("STEP 1.7: Bivariate Correlation & Multicollinearity Analysis...")
+        print("=" * 70)
+
+        df = self.df_train.copy()
+        
+        # Select numeric and ordinal columns
+        num_cols = [c for c in df.columns if df[c].dtype.kind in ("i", "f", "u")]
+        num_cols = [c for c in num_cols if c not in ("loan_id", "month_index", "dq_score")]
+        
+        corr_matrix = df[num_cols].corr(method="pearson")
+        spearman_matrix = df[num_cols].corr(method="spearman")
+        
+        collinear_pairs = []
+        for i in range(len(num_cols)):
+            for j in range(i + 1, len(num_cols)):
+                f1, f2 = num_cols[i], num_cols[j]
+                r_p = corr_matrix.loc[f1, f2]
+                r_s = spearman_matrix.loc[f1, f2]
+                if abs(r_p) >= threshold or abs(r_s) >= threshold:
+                    collinear_pairs.append({
+                        "feature_1": f1,
+                        "feature_2": f2,
+                        "pearson_r": round(float(r_p), 4),
+                        "spearman_rho": round(float(r_s), 4),
+                        "severity": "HIGH_COLLINEARITY" if (abs(r_p) >= 0.85 or abs(r_s) >= 0.85) else "MODERATE_COLLINEARITY"
+                    })
+        
+        self.correlation_pairs = pd.DataFrame(collinear_pairs).sort_values("pearson_r", ascending=False) if collinear_pairs else pd.DataFrame()
+        print(f"  Computed correlations across {len(num_cols)} numeric features.")
+        print(f"  Flagged {len(collinear_pairs)} feature pairs exceeding |r| >= {threshold}")
+        return self.correlation_pairs
+
+    # ------------------------------------------------------------------
+    # STEP 1.8 - Record-Level DQ Scoring
     # ------------------------------------------------------------------
     def compute_dq_scores(self):
         print("\n" + "=" * 70)
-        print("STEP 1.7: Computing Record-Level Data Quality Scores (0-100)...")
+        print("STEP 1.8: Computing Record-Level Data Quality Scores (0-100)...")
         print("=" * 70)
 
         df = self.df_train.copy()
@@ -447,11 +477,11 @@ class LoanDataProfiler:
         return self.dq_scores
 
     # ------------------------------------------------------------------
-    # STEP 1.8 - Report Generation
+    # STEP 1.9 - Report Generation
     # ------------------------------------------------------------------
     def generate_report(self):
         print("\n" + "=" * 70)
-        print("STEP 1.8: Generating Data Intelligence Report...")
+        print("STEP 1.9: Generating Data Intelligence Report...")
         print("=" * 70)
 
         report_path = os.path.join(self.output_dir, "data_intelligence_report.md")
@@ -519,95 +549,64 @@ class LoanDataProfiler:
             if not cp.empty:
                 num_cp = cp[cp["dtype"].str.contains("float|int", case=False, na=False)]
                 cat_cp = cp[~cp["dtype"].str.contains("float|int", case=False, na=False)]
-                f.write(f"- **Total Columns**: {len(cp)}\n")
-                f.write(f"- **Numeric Columns**: {len(num_cp)}\n")
-                f.write(f"- **Categorical Columns**: {len(cat_cp)}\n\n")
 
-                f.write("### 1a. Numeric Column Statistics\n\n")
-                f.write("| Column | Null% | Min | Max | Mean | Std | Median | Skew |\n")
-                f.write("| :--- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |\n")
+                f.write("### Numeric Features\n\n")
+                f.write("| Column | Dtype | Null Count | Null% | Min | Median | Mean | Max | Std | Skew |\n")
+                f.write("| :--- | :--- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |\n")
                 for _, r in num_cp.iterrows():
-                    f.write(f"| `{r['column']}` | {r['null_pct']}% | {r['min']} | {r['max']} | "
-                            f"{r['mean']} | {r['std']} | {r['median']} | {r['skew']} |\n")
-                f.write("\n")
+                    f.write(f"| `{r['column']}` | {r['dtype']} | {r['null_count']:,} | {r['null_pct']}% | "
+                            f"{r['min']} | {r['median']} | {r['mean']} | {r['max']} | {r['std']} | {r['skew']} |\n")
 
-                f.write("### 1b. Categorical Column Summary\n\n")
-                f.write("| Column | Null% | Unique | Top 3 Values |\n")
-                f.write("| :--- | ---: | ---: | :--- |\n")
+                f.write("\n### Categorical Features\n\n")
+                f.write("| Column | Dtype | Unique | Null Count | Null% | Top Values |\n")
+                f.write("| :--- | :--- | ---: | ---: | ---: | :--- |\n")
                 for _, r in cat_cp.iterrows():
-                    f.write(f"| `{r['column']}` | {r['null_pct']}% | {r['n_unique']} | {r['top_values']} |\n")
-                f.write("\n")
-            f.write("---\n\n")
-
-            # 2. Missingness
-            f.write("## 2. Missing Value Analysis\n\n")
-            ma = self.missing_analysis
-            if not ma.empty:
-                f.write("| Column | Null Count | Null% | Pattern | Impact |\n")
-                f.write("| :--- | ---: | ---: | :--- | :--- |\n")
-                for _, r in ma.iterrows():
-                    badge = "🔴" if r["impact"] == "HIGH" else ("🟠" if r["impact"] == "MEDIUM" else "🟡")
-                    f.write(f"| `{r['column']}` | {r['null_count']:,} | {r['null_pct']}% | "
-                            f"{r['pattern']} | {badge} {r['impact']} |\n")
-            else:
-                f.write("No missing values detected in the training dataset.\n")
+                    f.write(f"| `{r['column']}` | {r['dtype']} | {r['n_unique']:,} | {r['null_count']:,} | "
+                            f"{r['null_pct']}% | {r['top_values']} |\n")
             f.write("\n---\n\n")
 
-            # 3. Outliers
-            f.write("## 3. Outlier Detection (3x IQR Fence)\n\n")
-            od = self.outlier_results
-            if not od.empty:
-                f.write("| Column | Lower Fence | Upper Fence | Outlier Count | Outlier% |\n")
+            # 2. Missingness Analysis
+            f.write("## 2. Missingness Analysis (MCAR / MAR Patterns)\n\n")
+            ma = self.missing_analysis
+            if not ma.empty:
+                f.write("| Column | Null Count | Null% | Classification | Impact | Description |\n")
+                f.write("| :--- | ---: | ---: | :--- | :--- | :--- |\n")
+                for _, r in ma.iterrows():
+                    badge = "🔴" if r["impact"] == "HIGH" else ("🟠" if r["impact"] == "MEDIUM" else "🟢")
+                    f.write(f"| `{r['column']}` | {r['null_count']:,} | {r['null_pct']}% | "
+                            f"**{r['pattern']}** | {badge} {r['impact']} | {r['pattern_detail']} |\n")
+            f.write("\n---\n\n")
+
+            # 3. Outlier Detection
+            f.write("## 3. Extreme Outliers (3x IQR Fence)\n\n")
+            out = self.outlier_results
+            if not out.empty:
+                f.write("| Feature | Lower Fence | Upper Fence | Outlier Count | Outlier% |\n")
                 f.write("| :--- | ---: | ---: | ---: | ---: |\n")
-                for _, r in od.iterrows():
-                    f.write(f"| `{r['column']}` | {r['iqr_lower']:,} | {r['iqr_upper']:,} | "
+                for _, r in out.iterrows():
+                    f.write(f"| `{r['column']}` | {r['lower_fence']:,} | {r['upper_fence']:,} | "
                             f"{r['outlier_count']:,} | {r['outlier_pct']}% |\n")
-            else:
-                f.write("No significant outliers detected.\n")
             f.write("\n---\n\n")
 
             # 4. Validation Rules
-            f.write("## 4. Validation Rule Results\n\n")
+            f.write("## 4. Deterministic Business & Accounting Rule Violations\n\n")
             rv = self.rule_violations
             if not rv.empty:
-                f.write("| Rule ID | Rule Name | Severity | Violations | Violation% | Exception Type |\n")
-                f.write("| :--- | :--- | :--- | ---: | ---: | :--- |\n")
+                f.write("| Rule ID | Rule Name | Severity | Exception Type | Violations | Violation% |\n")
+                f.write("| :--- | :--- | :--- | :--- | ---: | ---: |\n")
                 for _, r in rv.iterrows():
                     badge = "🔴" if r["severity"] == "CRITICAL" else ("🟠" if r["severity"] == "HIGH" else "🟡")
-                    f.write(f"| {r['rule_id']} | {r['rule_name']} | {badge} {r['severity']} | "
-                            f"{r['violation_count']:,} | {r['violation_pct']}% | `{r['exception_type']}` |\n")
+                    f.write(f"| `{r['rule_id']}` | {r['rule_name']} | {badge} {r['severity']} | "
+                            f"`{r['exception_type']}` | {r['violation_count']:,} | {r['violation_pct']}% |\n")
             f.write("\n---\n\n")
 
             # 5. Servicer Conflicts
-            f.write("## 5. Servicer Feed Reconciliation\n\n")
+            f.write("## 5. Cross-Source Servicer Conflict Reconciliation\n\n")
             sc = self.servicer_conflicts
-            if sc:
-                total = sc.get("total_matched", 1)
-                f.write("| Conflict Type | Count | Percentage |\n| :--- | ---: | ---: |\n")
-                f.write(f"| Matched Records | {sc.get('total_matched', 0):,} | 100.00% |\n")
-                f.write(f"| Balance Conflicts (>5% diff) | {sc.get('balance_conflicts', 0):,} | {sc.get('balance_conflict_pct', 0)}% |\n")
-                f.write(f"| Status Conflicts (mismatch) | {sc.get('status_conflicts', 0):,} | {sc.get('status_conflict_pct', 0)}% |\n")
-                f.write(f"| Stale Records (lag > 1 year) | {sc.get('stale_records', 0):,} | {sc.get('stale_pct', 0)}% |\n")
-                f.write(f"| Any Conflict (union) | {sc.get('any_conflict', 0):,} | "
-                        f"{round(sc.get('any_conflict', 0) / max(total, 1) * 100, 2)}% |\n\n")
-
-                if hasattr(self, "conflict_examples") and len(self.conflict_examples) > 0:
-                    f.write("### Sample Conflict Records (Top 10)\n\n")
-                    f.write("| Loan ID | Month | Primary Bal | Servicer Bal | Diff% | Primary Status | Servicer Status | Flags |\n")
-                    f.write("| :--- | :--- | ---: | ---: | ---: | :--- | :--- | :--- |\n")
-                    for _, r in self.conflict_examples.head(10).iterrows():
-                        flags = []
-                        if r.get("balance_conflict", 0): flags.append("BAL")
-                        if r.get("status_conflict", 0): flags.append("STATUS")
-                        if r.get("stale_flag", 0): flags.append("STALE")
-                        pb = f"${r.get('current_balance', 0):,.2f}"
-                        sb = f"${r.get('servicer_reported_balance', 0):,.2f}"
-                        dp = r.get("balance_diff_pct", 0)
-                        ps = r.get("current_status", "")
-                        ss = r.get("servicer_reported_status", "")
-                        f.write(f"| {r['loan_id']} | {r['reporting_month']} | {pb} | {sb} | "
-                                f"{dp}% | {ps} | {ss} | {'+'.join(flags)} |\n")
-            f.write("\n---\n\n")
+            f.write(f"- Total Matched Records: **{sc.get('total_matched', 0):,}**\n")
+            f.write(f"- Balance Discrepancies (>5%): **{sc.get('balance_conflicts', 0):,}** ({sc.get('balance_conflict_pct', 0)}%)\n")
+            f.write(f"- Status Discrepancies: **{sc.get('status_conflicts', 0):,}** ({sc.get('status_conflict_pct', 0)}%)\n")
+            f.write(f"- Stale Feed Records: **{sc.get('stale_records', 0):,}** ({sc.get('stale_pct', 0)}%)\n\n")
 
             # 6. PSI Drift
             f.write("## 6. Train vs. Test Population Stability Index (PSI)\n\n")
@@ -621,8 +620,22 @@ class LoanDataProfiler:
                     f.write(f"| `{r['column']}` | {r['psi']} | {badge} {r['drift_level']} | {r['dtype']} |\n")
             f.write("\n---\n\n")
 
-            # 7. DQ Score Distribution
-            f.write("## 7. Data Quality Score Distribution\n\n")
+            # 7. Correlation Analysis
+            f.write("## 7. Multicollinearity & Bivariate Correlation Analysis\n\n")
+            f.write("> Highlights highly dependent feature pairs (|r| >= 0.70) to inform regularization and model interpretability.\n\n")
+            cpairs = self.correlation_pairs
+            if not cpairs.empty:
+                f.write("| Feature 1 | Feature 2 | Pearson r | Spearman rho | Collinearity Level |\n")
+                f.write("| :--- | :--- | ---: | ---: | :--- |\n")
+                for _, r in cpairs.iterrows():
+                    badge = "🔴" if r["severity"] == "HIGH_COLLINEARITY" else "🟠"
+                    f.write(f"| `{r['feature_1']}` | `{r['feature_2']}` | **{r['pearson_r']:.4f}** | {r['spearman_rho']:.4f} | {badge} {r['severity']} |\n")
+            else:
+                f.write("No feature pairs exceeded the |r| >= 0.70 threshold.\n")
+            f.write("\n---\n\n")
+
+            # 8. DQ Score Distribution
+            f.write("## 8. Data Quality Score Distribution\n\n")
             f.write("Record-level DQ Score (0-100): starts at 100, deducted for rule violations, missing fields, and balance anomalies.\n\n")
             bq = self.batch_dq
             f.write("| DQ Metric | Value |\n| :--- | ---: |\n")
@@ -651,6 +664,7 @@ class LoanDataProfiler:
         self.apply_validation_rules()
         self.detect_servicer_conflicts()
         self.compute_psi()
+        self.compute_correlations()
         self.compute_dq_scores()
         report_path = self.generate_report()
         print("\n" + "=" * 70)

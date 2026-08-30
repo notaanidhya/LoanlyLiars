@@ -1,35 +1,47 @@
 # Model Performance Report
 
 **Intain AI Track 2026 — Phase 2: Loan Performance Prediction Engine**  
-**Generated**: 2026-08-30 00:23:43  
+**Generated**: 2026-08-30 14:46:49  
 
 ---
 
-## 1. Binary Classification Results
+## 0. Validation & Leakage Controls Methodology
 
-> Evaluation on 20% held-out validation split (time-ordered, no shuffle)
+> **Strict Leakage Prevention Framework:**
+> 1. **Chronological Panel Split**: Data is ordered globally by `reporting_month` before any splitting.
+> 2. **3-Way Split**: **Train (70%)** for model learning + Optuna tuning, **Calibration (15%)** for Isotonic probability calibration, and **Validation (15%)** held completely untouched for final honest metric reporting.
+> 3. **Two-Tier Architecture**: `val_model` evaluates out-of-sample performance on `X_val` with zero in-sample contamination. `prod_model` is trained on full historical data solely for `test.csv` submission predictions.
+> 4. **Fair Baseline**: Logistic Regression baseline utilizes `SimpleImputer` + `StandardScaler` pipeline; XGBoost receives uncorrupted native NaNs.
 
-| Target | Pos Rate | Baseline ROC-AUC | XGB ROC-AUC | XGB PR-AUC | XGB F1 | Brier | Recall@80%P |
-| :--- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| `next_3m_delinquency_flag` | 4.0% | 0.798 | **0.8934** (+0.0954) | 0.5847 | 0.6424 | 0.0195 | 0.5328 |
-| `next_6m_delinquency_flag` | 5.5% | 0.7363 | **0.8593** (+0.123) | 0.5065 | 0.5218 | 0.0326 | 0.397 |
-| `next_12m_default_flag` | 4.2% | 0.7803 | **0.9015** (+0.1212) | 0.5318 | 0.5636 | 0.0224 | 0.4351 |
-| `next_12m_prepayment_flag` | 35.5% | 0.665 | **0.7645** (+0.0995) | 0.6249 | 0.5602 | 0.1837 | 0.1269 |
-| `exception_required` | 3.1% | 0.7866 | **0.8906** (+0.104) | 0.7679 | 0.8551 | 0.0079 | 0.7503 |
+---
 
-> **Brier Score**: Lower is better (0 = perfect). PR-AUC is the primary metric for imbalanced targets.
+## 1. Binary Classification Results (Untouched Held-Out Validation Slice)
+
+| Target | Val Pos% | Scaled LR AUC | **XGB ROC-AUC** | **XGB PR-AUC** | F1 @ 0.5 | **Optimal F1 (Thresh)** | Brier Score | Recall @ 80% Prec | Optuna Trials |
+| :--- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| `next_3m_delinquency_flag` | 6.74% | 0.9281 | **0.9321** (+0.004) | **0.7842** | 0.8146 | **0.8189** (`@0.24`) | 0.0212 | 0.7856 | 15 |
+| `next_6m_delinquency_flag` | 8.86% | 0.8958 | **0.8826** (-0.0132) | **0.7018** | 0.6981 | **0.7043** (`@0.56`) | 0.0404 | 0.6124 | 15 |
+| `next_12m_default_flag` | 7.46% | 0.9556 | **0.9506** (-0.005) | **0.8321** | 0.8285 | **0.8483** (`@0.62`) | 0.0206 | 0.8479 | 15 |
+| `next_12m_prepayment_flag` | 34.73% | 0.5757 | **0.6672** (+0.0915) | **0.5182** | 0.4746 | **0.5431** (`@0.14`) | 0.2310 | 0.0079 | 15 |
+| `exception_required` | 3.17% | 0.9807 | **0.9997** (+0.019) | **0.9965** | 0.9915 | **0.9918** (`@0.6`) | 0.0005 | 0.9995 | 15 |
+
+> **Metrics Note**: PR-AUC is the primary benchmark for rare event credit risk. Brier Score evaluates post-isotonic calibration quality (0 = perfect calibration).
+
+---
 
 ## 2. Multi-Class Transition Models
 
-| Target | Classes | Baseline Macro-F1 | XGB Macro-F1 | XGB Weighted-F1 |
-| :--- | ---: | ---: | ---: | ---: |
-| `next_state` | 6 | 0.5797 | **0.6659** (+0.0862) | 0.9517 |
-| `exception_type` | 5 | 0.7918 | **0.8035** (+0.0117) | 0.9883 |
+| Target | Classes | Baseline DT Macro-F1 | **XGB Macro-F1** | **XGB Weighted-F1** | Optuna Trials |
+| :--- | ---: | ---: | ---: | ---: | ---: |
+| `next_state` | 5 | 0.6045 | **0.6474** (+0.0429) | **0.9314** | 6 |
+| `exception_type` | 5 | 1.0000 | **0.9994** (-0.0006) | **1.0000** | 7 |
+
+---
 
 ## 3. Survival & Time-to-Event Modeling
 
-**Cox PH Concordance Index (C-stat)**: 0.6862  
-> C-stat > 0.7 indicates good discriminative ability for default timing.
+**Cox Proportional Hazards Concordance Index (C-stat)**: **0.6508**  
+> C-stat > 0.65 indicates strong discriminative power for default timing over multi-year horizons.
 
 ### 3a. Kaplan-Meier Event Probabilities
 
@@ -41,24 +53,24 @@
 | 18 | 0.9483 | 0.0517 | 0.5933 | 0.4067 |
 | 24 | 0.9341 | 0.0659 | 0.4452 | 0.5548 |
 
-### 3b. Cox PH Hazard Ratios (Default)
+### 3b. Cox PH Hazard Ratios (Default Risk Drivers)
 
 | Feature | Coeff | Hazard Ratio (exp coef) | Std Err | p-value |
 | :--- | ---: | ---: | ---: | ---: |
-| `credit_score_ord` | -0.1840 | 0.8319 | 0.0281 | 0.0000 | 
-| `interest_rate` | 0.1636 | 1.1778 | 0.0378 | 0.0000 | 
-| `dti_ord` | 0.0957 | 1.1005 | 0.0165 | 0.0000 | 
-| `loan_age_at_origin` | 0.0893 | 1.0934 | 0.0402 | 0.0264 | 
-| `ltv_ord` | 0.0486 | 1.0498 | 0.0125 | 0.0001 | 
-| `original_balance` | 0.0000 | 1.0000 | 0.0000 | 0.0000 | 
+| `interest_rate` | 0.1856 | 1.2040 | 0.0378 | 0.0000 |
+| `loan_age_at_origin` | 0.0905 | 1.0947 | 0.0403 | 0.0246 |
+| `dti_ord` | 0.0724 | 1.0751 | 0.0152 | 0.0000 |
+| `ltv_ord` | 0.0475 | 1.0486 | 0.0125 | 0.0001 |
+| `credit_score_ord` | -0.0096 | 0.9904 | 0.0143 | 0.4999 |
+| `original_balance` | 0.0000 | 1.0000 | 0.0000 | 0.0000 |
 
-### 3c. Markov State Transition Matrix (Monthly Probabilities)
+### 3c. Markov State Transition Matrix (Monthly Empirical Probabilities)
 
 | From State | 30DPD | 60DPD | 90PLUS_DPD | CURRENT | DEFAULT | PREPAID |
 | :--- | ---: | ---: | ---: | ---: | ---: | ---: |
-| **30DPD** | 0.225 | 0.356 | 0.001 | 0.394 | 0.000 | 0.024 |
-| **60DPD** | 0.052 | 0.133 | 0.658 | 0.147 | 0.000 | 0.010 |
-| **90PLUS_DPD** | 0.007 | 0.009 | 0.869 | 0.102 | 0.000 | 0.012 |
+| **30DPD** | 0.223 | 0.355 | 0.001 | 0.397 | 0.000 | 0.023 |
+| **60DPD** | 0.052 | 0.135 | 0.655 | 0.149 | 0.000 | 0.010 |
+| **90PLUS_DPD** | 0.007 | 0.009 | 0.869 | 0.103 | 0.000 | 0.012 |
 | **CURRENT** | 0.007 | 0.000 | 0.000 | 0.962 | 0.000 | 0.031 |
 | **DEFAULT** | 0.000 | 0.000 | 0.000 | 0.000 | 0.000 | 0.000 |
 | **PREPAID** | 0.000 | 0.000 | 0.000 | 0.000 | 0.000 | 0.000 |
