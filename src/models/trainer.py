@@ -1,15 +1,19 @@
 """
 src/models/trainer.py
-Intain AI Track — Phase 2: Supervised ML Training Pipeline (Leakage-Free & Calibrated)
+Intain AI Track — Phase 2: Supervised ML Training Pipeline (Leakage-Free, Calibrated & Transition-Only)
+
 Covers:
+  - Removal of terminal state leakage features (default_flag, prepayment_flag, cumulative_default_flags, cumulative_prepay_flags)
+  - Transition-only universe masking:
+      * Default: Predict only on active, non-defaulted loans (default_flag == 0)
+      * Prepayment: Predict only on active, non-prepaid loans (prepayment_flag == 0)
+      * Delinquency: Predict only on non-severely delinquent loans (days_past_due < 90 & default_flag == 0)
   - Strict 3-way time-ordered split (Train 70% / Calib 15% / Val 15%)
   - Target right-censoring filtering (dynamic dropping of NaN targets per horizon)
   - Native NaN support for XGBoost (no global fillna)
   - Scaled LogisticRegression baseline with SimpleImputer
   - Optuna hyperparameter optimization
-  - Two-tier model architecture:
-      * val_model: Trained strictly on X_tr, calibrated on X_cal, evaluated on untouched X_val
-      * prod_model: Trained on full verified non-censored training data for test-set submission
+  - Two-tier model architecture (val_model on X_tr/X_cal/X_val, prod_model on full X_curr)
   - Dynamic threshold tuning for optimal F1 on imbalanced targets
   - Multi-class next_state & exception_type classifiers
   - MLflow experiment tracking
@@ -56,14 +60,30 @@ MULTICLASS_TARGETS = [
     "exception_type",
 ]
 
+# Features that directly leak current terminal state into future horizon targets
+LEAKY_TERMINAL_FEATURES = [
+    "default_flag",
+    "prepayment_flag",
+    "cumulative_default_flags",
+    "cumulative_prepay_flags",
+]
+
 
 class ModelTrainer:
     """Trains and evaluates all Phase 2 supervised models with zero data leakage."""
 
     def __init__(self, X_train, y_dict, X_test, feature_cols, output_dir="models"):
-        # Select common feature columns
-        avail = [c for c in feature_cols if c in X_train.columns and c in X_test.columns]
+        # Strip leaky terminal state features from feature space
+        avail = [
+            c for c in feature_cols
+            if c in X_train.columns and c in X_test.columns and c not in LEAKY_TERMINAL_FEATURES
+        ]
         self.feature_cols = avail
+        print(f"  [ModelTrainer] Filtered {len(LEAKY_TERMINAL_FEATURES)} leaky features. Active feature count: {len(self.feature_cols)}")
+
+        # Store raw inputs for universe transition masking
+        self.X_train_raw = X_train.copy()
+        self.X_test_raw = X_test.copy()
 
         # Pass NaNs natively to XGBoost — DO NOT call fillna(0) globally
         self.X_train = X_train[avail].copy()
@@ -109,18 +129,46 @@ class ModelTrainer:
         print(f"\n  ---- {target} ----")
 
         y = self.y_dict[target]
-        valid_mask = y.notna()
-        n_valid = int(valid_mask.sum())
-        n_censored = len(y) - n_valid
+        right_censored_mask = y.notna()
 
-        print(f"    Right-Censoring Filter: {n_valid:,} valid rows | {n_censored:,} censored rows dropped")
+        # 1. Transition-Only Universe Masking
+        if target == "next_12m_default_flag":
+            # Exclude loans already in default
+            if "default_flag" in self.X_train_raw.columns:
+                trans_mask = (self.X_train_raw["default_flag"] == 0)
+            else:
+                trans_mask = pd.Series(True, index=y.index)
+        elif target == "next_12m_prepayment_flag":
+            # Exclude loans already prepaid
+            if "prepayment_flag" in self.X_train_raw.columns:
+                trans_mask = (self.X_train_raw["prepayment_flag"] == 0)
+            else:
+                trans_mask = pd.Series(True, index=y.index)
+        elif target in ["next_3m_delinquency_flag", "next_6m_delinquency_flag"]:
+            # Exclude loans already severely delinquent (>=90 DPD) or defaulted
+            cond = pd.Series(True, index=y.index)
+            if "days_past_due" in self.X_train_raw.columns:
+                cond = cond & (self.X_train_raw["days_past_due"] < 90)
+            if "default_flag" in self.X_train_raw.columns:
+                cond = cond & (self.X_train_raw["default_flag"] == 0)
+            trans_mask = cond
+        else:
+            trans_mask = pd.Series(True, index=y.index)
 
-        if n_valid == 0 or y[valid_mask].sum() == 0:
+        combined_valid_mask = right_censored_mask & trans_mask
+        n_valid = int(combined_valid_mask.sum())
+        n_censored = int((~right_censored_mask).sum())
+        n_terminal_excluded = int((right_censored_mask & (~trans_mask)).sum())
+
+        print(f"    Transition Universe Filter: {n_valid:,} active non-terminal rows | "
+              f"{n_terminal_excluded:,} terminal rows excluded | {n_censored:,} right-censored dropped")
+
+        if n_valid == 0 or y[combined_valid_mask].sum() == 0:
             print(f"    SKIP: zero valid/positive examples.")
             return {}, None
 
-        X_curr = self.X_train[valid_mask].reset_index(drop=True)
-        y_curr = y[valid_mask].astype(int).reset_index(drop=True)
+        X_curr = self.X_train[combined_valid_mask].reset_index(drop=True)
+        y_curr = y[combined_valid_mask].astype(int).reset_index(drop=True)
 
         # 3-Way time-ordered split: 70% Train, 15% Calibration, 15% Held-Out Validation
         n = len(X_curr)
@@ -203,6 +251,7 @@ class ModelTrainer:
         metrics = {
             "target": target,
             "n_valid_total": n_valid,
+            "n_terminal_excluded": n_terminal_excluded,
             "n_censored_dropped": n_censored,
             "n_train_tr": int(len(y_tr)),
             "n_cal": int(len(y_cal)),
@@ -391,7 +440,7 @@ class ModelTrainer:
     # ------------------------------------------------------------------
     def train_all(self, binary_trials=15, multiclass_trials=10):
         print("=" * 60)
-        print("PHASE 2: SUPERVISED ML MODEL TRAINING (ZERO-LEAKAGE & UNCENSORED)")
+        print("PHASE 2: SUPERVISED ML MODEL TRAINING (ZERO-LEAKAGE & TRANSITION-ONLY)")
         print(f"Features: {len(self.feature_cols)} | Binary Targets: {len(BINARY_TARGETS)} | Multi-Class: {len(MULTICLASS_TARGETS)}")
         print("=" * 60)
 

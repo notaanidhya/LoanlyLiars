@@ -187,19 +187,11 @@ class RuleBreachEvaluator:
 
         # VR-008: Feed Staleness Check (> 60 days lag) (MEDIUM - 0.20)
         # Check staleness: if reporting_month is YYYYMM and last_updated is YYYY-MM-DD
-        stale_mask = np.zeros(n, dtype=bool)
-        for i in range(n):
-            ts = str(last_updated[i]).strip()
-            rm = str(rep_m[i]).strip()
-            if len(ts) >= 10 and len(rm) == 6:
-                try:
-                    rep_date = datetime(int(rm[:4]), int(rm[4:6]), 1)
-                    upd_date = datetime.strptime(ts[:10], "%Y-%m-%d")
-                    delta_days = (rep_date - upd_date).days
-                    if delta_days > 60:
-                        stale_mask[i] = True
-                except Exception:
-                    pass
+        rep_str = pd.Series(rep_m).astype(str) + "01"
+        rep_dates = pd.to_datetime(rep_str, format="%Y%m%d", errors="coerce")
+        upd_dates = pd.to_datetime(pd.Series(last_updated).astype(str).str.slice(0, 10), format="%Y-%m-%d", errors="coerce")
+        delta_days = (rep_dates - upd_dates).dt.days
+        stale_mask = (delta_days > 60).fillna(False).values
 
         rule_scores[stale_mask] += 0.20
         n_breaches[stale_mask] += 1

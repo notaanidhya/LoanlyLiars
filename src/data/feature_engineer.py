@@ -148,7 +148,8 @@ class FeatureEngineer:
         # Balance trajectory
         combined["prev_balance"] = grp["current_balance"].shift(1)
         combined["balance_change_1m"] = combined["current_balance"] - combined["prev_balance"]
-        combined["balance_pct_original"] = combined["current_balance"] / (combined["original_balance"] + 1e-5)
+        safe_orig = np.maximum(combined["original_balance"].fillna(1.0), 1.0)
+        combined["balance_pct_original"] = combined["current_balance"] / safe_orig
         combined["balance_ratio_change"] = combined["balance_change_1m"] / (combined["original_balance"] + 1e-5)
         combined["amortization_pct"] = (1.0 - combined["balance_pct_original"]).clip(lower=0, upper=1)
 
@@ -199,14 +200,19 @@ class FeatureEngineer:
     def create_interaction_features(self, df):
         df = df.copy()
         if "dti_ord" in df.columns and "ltv_ord" in df.columns:
-            df["dti_x_ltv"] = df["dti_ord"] * df["ltv_ord"]
+            d_val = np.where(df["dti_ord"] >= 0, df["dti_ord"], np.nan)
+            l_val = np.where(df["ltv_ord"] >= 0, df["ltv_ord"], np.nan)
+            df["dti_x_ltv"] = np.where(pd.notnull(d_val) & pd.notnull(l_val), d_val * l_val, -1.0)
         if "loan_age_months" in df.columns and "interest_rate" in df.columns:
             df["age_x_rate"] = df["loan_age_months"] * df["interest_rate"]
         if "credit_score_ord" in df.columns and "dti_ord" in df.columns:
-            df["creditworthiness_net"] = df["credit_score_ord"] - df["dti_ord"]
+            c_val = np.where(df["credit_score_ord"] >= 0, df["credit_score_ord"], np.nan)
+            d_val = np.where(df["dti_ord"] >= 0, df["dti_ord"], np.nan)
+            df["creditworthiness_net"] = np.where(pd.notnull(c_val) & pd.notnull(d_val), c_val - d_val, -1.0)
         if all(c in df.columns for c in ["credit_score_ord", "ltv_ord", "dti_ord"]):
             df["high_risk_combo"] = (
-                (df["credit_score_ord"] <= 1) & (df["ltv_ord"] >= 3) & (df["dti_ord"] >= 3)
+                (df["credit_score_ord"] >= 0) & (df["credit_score_ord"] <= 1) & 
+                (df["ltv_ord"] >= 3) & (df["dti_ord"] >= 3)
             ).astype(int)
         if "dpd_3m_mean" in df.columns and "balance_pct_original" in df.columns:
             df["distress_score"] = df["dpd_3m_mean"] * df["balance_pct_original"]

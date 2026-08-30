@@ -93,3 +93,36 @@
   * Phase 1: `reports/data_intelligence_report.md` (31,813 rule violations, 7 collinear pairs, MCAR/MAR profiling).
   * Phase 2: `reports/model_performance_report.md` (all 5 binary + 2 multiclass models retrained with zero lag collapse).
   * Phase 3: `reports/anomaly_detection_report.md` (weights calibrated via Differential Evolution: w_ML=34.4%, w_Rule=46.5%, w_Servicer=15.2%, w_DQ=3.8%).
+
+### Entry: Phase 4 Model Explainability (TreeSHAP), Dual-Risk Attribution & Error Diagnostics
+- **TreeSHAP Global Summary Visualizations**:
+  * Generated publication-grade beeswarm and feature impact plots across 4 key models:
+    - `next_12m_default_flag`: Credit risk escalation driven by `dpd_3m_mean`, `dti_x_ltv`, `status_severity`.
+    - `next_12m_prepayment_flag`: Prepayment yield risk driven by `prepayment_incentive`, `market_avg_rate`, `credit_score_ord`.
+    - `next_3m_delinquency_flag`: Short-term default risk driven by `days_past_due`, `status_severity`, `maturity_pressure`.
+    - `IsolationForest`: Multivariate anomaly isolation driven by `distress_score`, `age_x_rate`, `rate_spread_to_market`.
+- **Directional Attribution Framework**:
+  * Supervised Classifiers: Filtered by highest positive log-odds (`np.argsort(-shap, axis=1)`).
+  * Isolation Forest ($S_{\\text{ML}}$): Filtered by lowest algebraic path length compression (`np.argsort(shap, axis=1)`), preventing normality-inducing features from being misattributed as anomaly drivers.
+- **20 Reviewer-Ready Local Waterfall Case Cards**:
+  * Generated 20 high-resolution individual waterfall charts (`reports/figures/waterfall_case_01.png` through `waterfall_case_20.png`).
+  * Stratified across diverse reviewer actions (`MANUAL_AUDIT`, `ESCALATE_DOC_REVIEW`, `OVERRIDE_SERVICER`, `REQUEST_CURE`, `ACCEPT_PRIMARY`).
+- **Vectorized Full Test-Set Driver Staging**:
+  * Computed directional TreeSHAP drivers across all 304,374 test rows in memory-safe batches.
+  * Staged `data/processed/phase4_shap_drivers_test.csv` (100% complete, 0.00% null rate) ready for final `submission.csv` assembly.
+- **Holdout Validation Error Diagnostics**:
+  * Profiled False Positive vs. True Negative and False Negative vs. True Positive feature divergences on the 15% held-out validation cohort.
+  * Generated comprehensive audit documentation in `reports/model_explainability_report.md`.
+
+## Phase 5 Execution Log — 2026-08-30 19:46:03
+- **Objective**: Task 5 Scenario Simulation & Capital Stress Engine.
+- **Scenarios Evaluated**: Base (1.0x), Adverse Credit (+150bps rate, +3.5% unemp, -10% HPA, 2.30x default, 0.65x prepay), High Prepayment (-150bps rate, +6.0% HPA, 2.75x prepay, 0.85x default).
+- **Deliverables**:
+  - `src/simulation/stress_engine.py`: Core simulation and micro-macro shock engine.
+  - `run_phase5.py`: Master simulation pipeline orchestrator.
+  - `data/processed/phase5_scenario_projections.csv`: Multi-horizon cash flow & loss projections.
+  - `data/processed/phase5_segment_stress_impacts.csv`: Granular risk segment breakdowns.
+  - `reports/figures/scenario_hazard_curves.png`: Competing default/prepay hazard curves.
+  - `reports/figures/segment_stress_heatmap.png`: High-risk geographic & credit segment concentrations.
+  - `reports/figures/transition_stress_comparison.png`: 24-month Markov state roll-rate trajectories.
+  - `reports/scenario_simulation_report.md`: Formal stress test executive report.
