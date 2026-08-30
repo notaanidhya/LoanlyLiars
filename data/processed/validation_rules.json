@@ -1,0 +1,68 @@
+{
+  "rules": [
+    {
+      "rule_id": "VR-001",
+      "rule_name": "Balance Ratio Upper Bound Check",
+      "description": "Current balance must not exceed 115% of original balance unless positive modification is recorded.",
+      "condition": "current_balance <= original_balance * 1.15 or modification_flag == 'Y'",
+      "severity": "CRITICAL",
+      "exception_type": "BALANCE_INCONSISTENCY"
+    },
+    {
+      "rule_id": "VR-002",
+      "rule_name": "Status DPD Consistency",
+      "description": "If days_past_due > 0, current_status must not be CURRENT.",
+      "condition": "not (days_past_due > 0 and current_status == 'CURRENT')",
+      "severity": "HIGH",
+      "exception_type": "STATUS_CONFLICT"
+    },
+    {
+      "rule_id": "VR-003",
+      "rule_name": "Origination Date Validity",
+      "description": "Reporting month must be equal to or greater than origination month.",
+      "condition": "reporting_month >= origination_month",
+      "severity": "CRITICAL",
+      "exception_type": "INVALID_DATE"
+    },
+    {
+      "rule_id": "VR-004",
+      "rule_name": "Remaining Term Sanity Check",
+      "description": "Remaining term months must be between 0 and 360.",
+      "condition": "remaining_term_months >= 0 and remaining_term_months <= 360",
+      "severity": "HIGH",
+      "exception_type": "INVALID_TERM"
+    },
+    {
+      "rule_id": "VR-005",
+      "rule_name": "Prepayment Balance Check",
+      "description": "If prepayment_flag == 1 or current_status == 'PREPAID', current_balance must be 0.00.",
+      "condition": "not (current_status == 'PREPAID' and current_balance > 0)",
+      "severity": "CRITICAL",
+      "exception_type": "BALANCE_INCONSISTENCY"
+    },
+    {
+      "rule_id": "VR-006",
+      "rule_name": "Document Verification Status",
+      "description": "Document status must be VERIFIED or PENDING; missing notes require manual audit.",
+      "condition": "document_status == 'VERIFIED'",
+      "severity": "MEDIUM",
+      "exception_type": "DOCUMENT_GAP"
+    },
+    {
+      "rule_id": "VR-007",
+      "rule_name": "Servicer Feed Reconciliation",
+      "description": "Primary balance and servicer reported balance must match within 5% tolerance.",
+      "condition": "abs(current_balance - servicer_reported_balance) / (original_balance + 1e-5) <= 0.05",
+      "severity": "HIGH",
+      "exception_type": "SERVICER_CONFLICT"
+    },
+    {
+      "rule_id": "VR-008",
+      "rule_name": "Feed Staleness Check",
+      "description": "Last updated timestamp must not lag reporting month by more than 60 days.",
+      "condition": "days_between(reporting_month, last_updated_at) <= 60",
+      "severity": "MEDIUM",
+      "exception_type": "STALE_RECORD"
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+# ==========================================
+# Data Files (Raw, Historical, Large CSVs)
+# ==========================================
+data/historical_data_*/
+data/raw/
+data/processed/*.csv
+data/**/*.csv
+data/**/*.txt
+data/**/*.zip
+data/**/*.tar.gz
+data/**/*.parquet
+*.csv
+*.tsv
+*.txt
+
+# Allow tracking of specific schema & rule definitions
+!data/processed/data_dictionary.md
+!data/processed/validation_rules.json
+!data/**/.gitkeep
+
+# ==========================================
+# Model Weights & Serialized Artifacts
+# ==========================================
+models/*.pkl
+models/*.joblib
+models/*.pt
+models/*.onnx
+models/*.bin
+*.pkl
+*.joblib
+
+# ==========================================
+# MLflow / Tracking / Temporary Logs
+# ==========================================
+mlruns/
+mlartifacts/
+.mlflow/
+wandb/
+*.log
+!logs/ai_development_log.md
+
+# ==========================================
+# Python Bytecode & Cache
+# ==========================================
+__pycache__/
+*.py[cod]
+*.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# ==========================================
+# Virtual Environments
+# ==========================================
+.venv/
+venv/
+ENV/
+env/
+
+# ==========================================
+# Jupyter & Testing Caches
+# ==========================================
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# ==========================================
+# IDE & OS-Specific Files
+# ==========================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+desktop.ini
