@@ -126,3 +126,97 @@
   - `reports/figures/segment_stress_heatmap.png`: High-risk geographic & credit segment concentrations.
   - `reports/figures/transition_stress_comparison.png`: 24-month Markov state roll-rate trajectories.
   - `reports/scenario_simulation_report.md`: Formal stress test executive report.
+
+## Phase 6 Execution Log — 2026-08-30 19:52:46
+- **Objective**: Task 7 LLM Reviewer Copilot, Task 8 Model Governance, and Final submission.csv Packaging.
+- **Deliverables**:
+  - `src/llm/reviewer_copilot.py`: Grounded Reviewer Copilot with prompt logger.
+  - `src/llm/hallucination_auditor.py`: 4-case hallucination failure mode and guardrail audit.
+  - `src/utils/submission_builder.py`: Final submission.csv assembler and schema validator.
+  - `submission.csv`: 100% clean, 0-null competition submission (92,586 rows).
+  - `reports/llm_copilot_audit_report.md`: Formal LLM copilot memos, logs, and hallucination rejection catalog.
+  - `reports/model_card.md`: Industry-standard Model Card (Mitchell et al., 2019).
+  - `logs/llm_review_log.jsonl`: ISO-timestamped prompt and response audit trail.
+
+## Phase 6 Execution Log — 2026-08-30 19:53:02
+- **Objective**: Task 7 LLM Reviewer Copilot, Task 8 Model Governance, and Final submission.csv Packaging.
+- **Deliverables**:
+  - `src/llm/reviewer_copilot.py`: Grounded Reviewer Copilot with prompt logger.
+  - `src/llm/hallucination_auditor.py`: 4-case hallucination failure mode and guardrail audit.
+  - `src/utils/submission_builder.py`: Final submission.csv assembler and schema validator.
+  - `submission.csv`: 100% clean, 0-null competition submission (92,586 rows).
+  - `reports/llm_copilot_audit_report.md`: Formal LLM copilot memos, logs, and hallucination rejection catalog.
+  - `reports/model_card.md`: Industry-standard Model Card (Mitchell et al., 2019).
+  - `logs/llm_review_log.jsonl`: ISO-timestamped prompt and response audit trail.
+
+## Phase 5 Execution Log — 2026-08-30 21:04:53
+- **Objective**: Task 5 Scenario Simulation & Capital Stress Engine.
+- **Scenarios Evaluated**: Base (1.0x), Adverse Credit (+150bps rate, +3.5% unemp, -10% HPA, 2.30x default, 0.65x prepay), High Prepayment (-150bps rate, +6.0% HPA, 2.75x prepay, 0.85x default).
+- **Deliverables**:
+  - `src/simulation/stress_engine.py`: Core simulation and micro-macro shock engine.
+  - `run_phase5.py`: Master simulation pipeline orchestrator.
+  - `data/processed/phase5_scenario_projections.csv`: Multi-horizon cash flow & loss projections.
+  - `data/processed/phase5_segment_stress_impacts.csv`: Granular risk segment breakdowns.
+  - `reports/figures/scenario_hazard_curves.png`: Competing default/prepay hazard curves.
+  - `reports/figures/segment_stress_heatmap.png`: High-risk geographic & credit segment concentrations.
+  - `reports/figures/transition_stress_comparison.png`: 24-month Markov state roll-rate trajectories.
+  - `reports/scenario_simulation_report.md`: Formal stress test executive report.
+
+## Phase 5 Execution Log — 2026-08-30 21:56:12
+- **Objective**: Task 5 Scenario Simulation & Capital Stress Engine.
+- **Scenarios Evaluated**: Base (1.0x), Adverse Credit (+150bps rate, +3.5% unemp, -10% HPA, 2.30x default, 0.65x prepay), High Prepayment (-150bps rate, +6.0% HPA, 2.75x prepay, 0.85x default).
+- **Deliverables**:
+  - `src/simulation/stress_engine.py`: Core simulation and micro-macro shock engine.
+  - `run_phase5.py`: Master simulation pipeline orchestrator.
+  - `data/processed/phase5_scenario_projections.csv`: Multi-horizon cash flow & loss projections.
+  - `data/processed/phase5_segment_stress_impacts.csv`: Granular risk segment breakdowns.
+  - `reports/figures/scenario_hazard_curves.png`: Competing default/prepay hazard curves.
+  - `reports/figures/segment_stress_heatmap.png`: High-risk geographic & credit segment concentrations.
+  - `reports/figures/transition_stress_comparison.png`: 24-month Markov state roll-rate trajectories.
+  - `reports/scenario_simulation_report.md`: Formal stress test executive report.
+
+## Phase 6 Execution Log — 2026-08-30 22:00:07
+- **Objective**: Task 7 LLM Reviewer Copilot, Task 8 Model Governance, and Final submission.csv Packaging.
+- **Deliverables**:
+  - `src/llm/reviewer_copilot.py`: Grounded Reviewer Copilot with prompt logger.
+  - `src/llm/hallucination_auditor.py`: 4-case hallucination failure mode and guardrail audit.
+  - `src/utils/submission_builder.py`: Final submission.csv assembler and schema validator.
+  - `submission.csv`: 100% clean, 0-null competition submission (40,418 rows).
+  - `reports/llm_copilot_audit_report.md`: Formal LLM copilot memos, logs, and hallucination rejection catalog.
+  - `reports/model_card.md`: Industry-standard Model Card (Mitchell et al., 2019).
+  - `logs/llm_review_log.jsonl`: ISO-timestamped prompt and response audit trail.
+
+## Phase 6 Execution Log — 2026-08-30 22:28:02
+- **Objective**: Task 7 LLM Reviewer Copilot, Task 8 Model Governance, and Final submission.csv Packaging.
+- **Deliverables**:
+  - `src/llm/reviewer_copilot.py`: Grounded Reviewer Copilot with prompt logger.
+  - `src/llm/hallucination_auditor.py`: 4-case hallucination failure mode and guardrail audit.
+  - `src/utils/submission_builder.py`: Final submission.csv assembler and schema validator.
+  - `submission.csv`: 100% clean, 0-null competition submission (40,418 rows).
+  - `reports/llm_copilot_audit_report.md`: Formal LLM copilot memos, logs, and hallucination rejection catalog.
+  - `reports/model_card.md`: Industry-standard Model Card (Mitchell et al., 2019).
+  - `logs/llm_review_log.jsonl`: ISO-timestamped prompt and response audit trail.
+
+## Phase 5 Execution Log — 2026-08-30 23:27:23
+- **Objective**: Task 5 Scenario Simulation & Capital Stress Engine.
+- **Scenarios Evaluated**: Base (1.0x), Adverse Credit (+150bps rate, +3.5% unemp, -10% HPA, 2.30x default, 0.65x prepay), High Prepayment (-150bps rate, +6.0% HPA, 2.75x prepay, 0.85x default).
+- **Deliverables**:
+  - `src/simulation/stress_engine.py`: Core simulation and micro-macro shock engine.
+  - `run_phase5.py`: Master simulation pipeline orchestrator.
+  - `data/processed/phase5_scenario_projections.csv`: Multi-horizon cash flow & loss projections.
+  - `data/processed/phase5_segment_stress_impacts.csv`: Granular risk segment breakdowns.
+  - `reports/figures/scenario_hazard_curves.png`: Competing default/prepay hazard curves.
+  - `reports/figures/segment_stress_heatmap.png`: High-risk geographic & credit segment concentrations.
+  - `reports/figures/transition_stress_comparison.png`: 24-month Markov state roll-rate trajectories.
+  - `reports/scenario_simulation_report.md`: Formal stress test executive report.
+
+## Phase 6 Execution Log — 2026-08-30 23:27:30
+- **Objective**: Task 7 LLM Reviewer Copilot, Task 8 Model Governance, and Final submission.csv Packaging.
+- **Deliverables**:
+  - `src/llm/reviewer_copilot.py`: Grounded Reviewer Copilot with prompt logger.
+  - `src/llm/hallucination_auditor.py`: 4-case hallucination failure mode and guardrail audit.
+  - `src/utils/submission_builder.py`: Final submission.csv assembler and schema validator.
+  - `submission.csv`: 100% clean, 0-null competition submission (304,374 rows).
+  - `reports/llm_copilot_audit_report.md`: Formal LLM copilot memos, logs, and hallucination rejection catalog.
+  - `reports/model_card.md`: Industry-standard Model Card (Mitchell et al., 2019).
+  - `logs/llm_review_log.jsonl`: ISO-timestamped prompt and response audit trail.

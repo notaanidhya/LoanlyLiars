@@ -189,7 +189,7 @@ def run_phase2():
 
     # Save test predictions
     print("\nSaving test predictions...")
-    pred_df = test[["loan_id", "reporting_month"]].copy()
+    pred_df = test_fe[["loan_id", "reporting_month"]].copy()
     for target, preds in trainer.test_predictions.items():
         if not target.endswith("_proba"):
             pred_df[f"pred_{target}"] = preds

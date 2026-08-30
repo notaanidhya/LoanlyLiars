@@ -91,14 +91,12 @@ class MacroStressSimulator:
         rate_shock = float(scenario_row.get("interest_rate_shock_bps", 0)) / 100.0
         hpa_shock = float(scenario_row.get("hpa_shock_pct", 0.0)) / 100.0
 
-        # Interest rate and spread shocks
-        if "interest_rate" in df_s.columns:
-            df_s["interest_rate"] = np.clip(df_s["interest_rate"] + rate_shock, 0.5, 18.0)
-        
+        # Macro rate shock affects market prevailing rate (borrower's note rate is fixed)
         if "market_avg_rate" in df_s.columns:
             df_s["market_avg_rate"] = np.clip(df_s["market_avg_rate"] + rate_shock, 0.5, 18.0)
-            df_s["rate_spread_to_market"] = df_s["interest_rate"] - df_s["market_avg_rate"]
-            df_s["prepayment_incentive"] = -df_s["rate_spread_to_market"]
+            if "interest_rate" in df_s.columns:
+                df_s["rate_spread_to_market"] = df_s["interest_rate"] - df_s["market_avg_rate"]
+                df_s["prepayment_incentive"] = df_s["interest_rate"] - df_s["market_avg_rate"]
 
         # HPA & Collateral Valuation Shock -> LTV Migration
         hpa_mult = max(0.1, 1.0 + hpa_shock)

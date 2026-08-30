@@ -291,19 +291,14 @@ class ModelTrainer:
         prod_model = xgb.XGBClassifier(**prod_params)
         prod_model.fit(X_curr, y_curr, verbose=False)
 
-        # Calibrate production model on validation probabilities
-        raw_val_for_prod = prod_model.predict_proba(X_val)[:, 1]
-        prod_calibrator = IsotonicRegression(out_of_bounds="clip")
-        prod_calibrator.fit(raw_val_for_prod, y_val)
-
-        # Test set predictions
+        # Calibrate production model using out-of-fold calibrator iso_cal
         raw_test_proba = prod_model.predict_proba(self.X_test)[:, 1]
-        self.test_predictions[target] = prod_calibrator.transform(raw_test_proba)
+        self.test_predictions[target] = iso_cal.transform(raw_test_proba)
 
         # ---- Save model artifacts ----
         artifact = {
             "model": prod_model,
-            "calibrator": prod_calibrator,
+            "calibrator": iso_cal,
             "val_model": val_model,
             "metrics": metrics,
             "feature_cols": self.feature_cols,

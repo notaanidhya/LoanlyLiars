@@ -180,7 +180,7 @@ class FeatureEngineer:
         macro_rates = np.array([self.macro_rate_map.get(m, self.baseline_macro_rate) for m in rep_months])
         combined["market_avg_rate"] = macro_rates
         combined["rate_spread_to_market"] = combined["interest_rate"] - macro_rates
-        combined["prepayment_incentive"] = -combined["rate_spread_to_market"]
+        combined["prepayment_incentive"] = combined["interest_rate"] - macro_rates
 
         # Fill difference lags for genuine first-ever observations
         for col in ["prev_balance", "balance_change_1m", "balance_ratio_change", "prev_dpd", "dpd_change_1m"]:
