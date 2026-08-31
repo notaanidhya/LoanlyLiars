@@ -13,6 +13,7 @@ import ScenarioStress from './pages/ScenarioStress';
 import ReviewerCopilot from './pages/ReviewerCopilot';
 import HowWeGotHere from './pages/HowWeGotHere';
 import Deliverables from './pages/Deliverables';
+import PitchDeck from './pages/PitchDeck';
 
 export default function App() {
   const navTabs = [
@@ -24,6 +25,7 @@ export default function App() {
     { path: '/reviewer-copilot', label: '5. Reviewer Copilot' },
     { path: '/how-we-got-here', label: '6. How We Got Here' },
     { path: '/deliverables', label: '7. Deliverables' },
+    { path: '/pitch', label: '8. Pitch Deck' },
   ];
 
   return (
@@ -69,6 +71,7 @@ export default function App() {
             <Route path="/reviewer-copilot" element={<ReviewerCopilot />} />
             <Route path="/how-we-got-here" element={<HowWeGotHere />} />
             <Route path="/deliverables" element={<Deliverables />} />
+            <Route path="/pitch" element={<PitchDeck />} />
           </Routes>
         </main>
 
