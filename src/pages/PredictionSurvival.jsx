@@ -114,7 +114,7 @@ export default function PredictionSurvival() {
                 </h3>
               </div>
               <p style={{ fontSize: 'var(--text-xs)', color: 'var(--ink-muted)', marginBottom: 'var(--space-4)' }}>
-                Cumulative survival probability $S(t)$ over 36 months stratified across credit score tiers (C-stat: 0.6866).
+                Cumulative survival probability <span className="mono-data" style={{ color: 'var(--ledger-ink)', fontWeight: 600 }}>S(t)</span> over 36 months stratified across credit score tiers (C-statistic: 0.6866).
               </p>
 
               {/* Pure SVG Survival Curves Chart */}

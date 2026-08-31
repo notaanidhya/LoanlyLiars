@@ -158,7 +158,7 @@ class ReviewerCopilot:
 #### 1. Executive Summary & Recommended Action
 - **Recommended Action**: **`{action}`** (Confidence: **{confidence}**)
 - **Composite Anomaly Score**: `{anom_score:.4f}` | **Primary Exception**: `{primary_exception}`
-- **Evidence Breakdown**: ML Layer ($w_1 \\cdot S_{{\\text{{ML}}}}$): `{s_ml:.3f}` | Rule Layer ($w_2 \\cdot S_{{\\text{{rule}}}}$): `{s_rule:.3f}` | Servicer Layer ($w_3 \\cdot S_{{\\text{{servicer}}}}$): `{s_servicer:.3f}` | DQ Layer ($w_4 \\cdot S_{{\\text{{DQ}}}}$): `{s_dq:.3f}`
+- **Evidence Breakdown**: ML Layer (w₁·S_ML): `{s_ml:.3f}` | Rule Layer (w₂·S_rule): `{s_rule:.3f}` | Servicer Layer (w₃·S_servicer): `{s_servicer:.3f}` | DQ Layer (w₄·S_DQ): `{s_dq:.3f}`
 - **Account Snapshot**: Balance **${cur_bal:,.2f}** (${orig_bal:,.2f} Orig) | Status: **{cur_stat}** ({dpd} DPD) | Servicer: **{servicer}**
 - **Borrower Profile**: Credit **{credit_band}** | LTV **{ltv_band}** | DTI **{dti_band}** | Docs: **{doc_stat}**
 

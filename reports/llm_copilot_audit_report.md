@@ -93,7 +93,7 @@ The following production memos demonstrate successful grounded synthesis across 
 #### 1. Executive Summary & Recommended Action
 - **Recommended Action**: **`MANUAL_AUDIT`** (Confidence: **0.9**)
 - **Composite Anomaly Score**: `0.3986` | **Primary Exception**: `BALANCE_INCONSISTENCY`
-- **Evidence Breakdown**: ML Layer ($w_1 \cdot S_{\text{ML}}$): `0.459` | Rule Layer ($w_2 \cdot S_{\text{rule}}$): `0.500` | Servicer Layer ($w_3 \cdot S_{\text{servicer}}$): `0.000` | DQ Layer ($w_4 \cdot S_{\text{DQ}}$): `0.000`
+- **Evidence Breakdown**: ML Layer (w₁·S_ML): `0.459` | Rule Layer (w₂·S_rule): `0.500` | Servicer Layer (w₃·S_servicer): `0.000` | DQ Layer (w₄·S_DQ): `0.000`
 - **Account Snapshot**: Balance **$70,328.78** ($50,000.00 Orig) | Status: **CURRENT** (0 DPD) | Servicer: **Pennymac Loan Services, LLC**
 - **Borrower Profile**: Credit **621-680 (Fair)** | LTV **>95%** | DTI **21-30%** | Docs: **VERIFIED**
 
@@ -135,7 +135,7 @@ The predictive models and anomaly detectors isolated the following primary risk 
 #### 1. Executive Summary & Recommended Action
 - **Recommended Action**: **`MANUAL_AUDIT`** (Confidence: **0.9**)
 - **Composite Anomaly Score**: `0.4127` | **Primary Exception**: `BALANCE_INCONSISTENCY`
-- **Evidence Breakdown**: ML Layer ($w_1 \cdot S_{\text{ML}}$): `0.498` | Rule Layer ($w_2 \cdot S_{\text{rule}}$): `0.500` | Servicer Layer ($w_3 \cdot S_{\text{servicer}}$): `0.000` | DQ Layer ($w_4 \cdot S_{\text{DQ}}$): `0.000`
+- **Evidence Breakdown**: ML Layer (w₁·S_ML): `0.498` | Rule Layer (w₂·S_rule): `0.500` | Servicer Layer (w₃·S_servicer): `0.000` | DQ Layer (w₄·S_DQ): `0.000`
 - **Account Snapshot**: Balance **$250,380.44** ($147,000.00 Orig) | Status: **CURRENT** (0 DPD) | Servicer: **Newrez LLC**
 - **Borrower Profile**: Credit **741-800 (Very Good)** | LTV **81-90%** | DTI **nan** | Docs: **VERIFIED**
 
@@ -177,7 +177,7 @@ The predictive models and anomaly detectors isolated the following primary risk 
 #### 1. Executive Summary & Recommended Action
 - **Recommended Action**: **`MANUAL_AUDIT`** (Confidence: **0.93**)
 - **Composite Anomaly Score**: `0.6131` | **Primary Exception**: `BALANCE_INCONSISTENCY`
-- **Evidence Breakdown**: ML Layer ($w_1 \cdot S_{\text{ML}}$): `0.412` | Rule Layer ($w_2 \cdot S_{\text{rule}}$): `1.000` | Servicer Layer ($w_3 \cdot S_{\text{servicer}}$): `0.000` | DQ Layer ($w_4 \cdot S_{\text{DQ}}$): `0.000`
+- **Evidence Breakdown**: ML Layer (w₁·S_ML): `0.412` | Rule Layer (w₂·S_rule): `1.000` | Servicer Layer (w₃·S_servicer): `0.000` | DQ Layer (w₄·S_DQ): `0.000`
 - **Account Snapshot**: Balance **$292,576.45** ($217,000.00 Orig) | Status: **PREPAID** (0 DPD) | Servicer: **Newrez LLC**
 - **Borrower Profile**: Credit **681-740 (Good)** | LTV **81-90%** | DTI **21-30%** | Docs: **VERIFIED**
 
@@ -219,7 +219,7 @@ The predictive models and anomaly detectors isolated the following primary risk 
 #### 1. Executive Summary & Recommended Action
 - **Recommended Action**: **`MANUAL_AUDIT`** (Confidence: **0.9**)
 - **Composite Anomaly Score**: `0.3510` | **Primary Exception**: `BALANCE_INCONSISTENCY`
-- **Evidence Breakdown**: ML Layer ($w_1 \cdot S_{\text{ML}}$): `0.328` | Rule Layer ($w_2 \cdot S_{\text{rule}}$): `0.500` | Servicer Layer ($w_3 \cdot S_{\text{servicer}}$): `0.000` | DQ Layer ($w_4 \cdot S_{\text{DQ}}$): `0.000`
+- **Evidence Breakdown**: ML Layer (w₁·S_ML): `0.328` | Rule Layer (w₂·S_rule): `0.500` | Servicer Layer (w₃·S_servicer): `0.000` | DQ Layer (w₄·S_DQ): `0.000`
 - **Account Snapshot**: Balance **$299,416.58** ($204,000.00 Orig) | Status: **CURRENT** (0 DPD) | Servicer: **Rocket Mortgage, LLC**
 - **Borrower Profile**: Credit **681-740 (Good)** | LTV **91-95%** | DTI **31-40%** | Docs: **VERIFIED**
 
@@ -261,7 +261,7 @@ The predictive models and anomaly detectors isolated the following primary risk 
 #### 1. Executive Summary & Recommended Action
 - **Recommended Action**: **`ESCALATE_DOC_REVIEW`** (Confidence: **0.95**)
 - **Composite Anomaly Score**: `0.2488` | **Primary Exception**: `DOCUMENT_GAP`
-- **Evidence Breakdown**: ML Layer ($w_1 \cdot S_{\text{ML}}$): `0.429` | Rule Layer ($w_2 \cdot S_{\text{rule}}$): `0.200` | Servicer Layer ($w_3 \cdot S_{\text{servicer}}$): `0.000` | DQ Layer ($w_4 \cdot S_{\text{DQ}}$): `0.000`
+- **Evidence Breakdown**: ML Layer (w₁·S_ML): `0.429` | Rule Layer (w₂·S_rule): `0.200` | Servicer Layer (w₃·S_servicer): `0.000` | DQ Layer (w₄·S_DQ): `0.000`
 - **Account Snapshot**: Balance **$48,300.00** ($53,000.00 Orig) | Status: **CURRENT** (0 DPD) | Servicer: **Rocket Mortgage, LLC**
 - **Borrower Profile**: Credit **741-800 (Very Good)** | LTV **61-75%** | DTI **<=20%** | Docs: **UNVERIFIED_APPRAISAL**
 
@@ -303,7 +303,7 @@ The predictive models and anomaly detectors isolated the following primary risk 
 #### 1. Executive Summary & Recommended Action
 - **Recommended Action**: **`ESCALATE_DOC_REVIEW`** (Confidence: **0.95**)
 - **Composite Anomaly Score**: `0.2571` | **Primary Exception**: `DOCUMENT_GAP`
-- **Evidence Breakdown**: ML Layer ($w_1 \cdot S_{\text{ML}}$): `0.452` | Rule Layer ($w_2 \cdot S_{\text{rule}}$): `0.200` | Servicer Layer ($w_3 \cdot S_{\text{servicer}}$): `0.000` | DQ Layer ($w_4 \cdot S_{\text{DQ}}$): `0.000`
+- **Evidence Breakdown**: ML Layer (w₁·S_ML): `0.452` | Rule Layer (w₂·S_rule): `0.200` | Servicer Layer (w₃·S_servicer): `0.000` | DQ Layer (w₄·S_DQ): `0.000`
 - **Account Snapshot**: Balance **$129,652.40** ($186,000.00 Orig) | Status: **CURRENT** (0 DPD) | Servicer: **Pennymac Loan Services, LLC**
 - **Borrower Profile**: Credit **741-800 (Very Good)** | LTV **81-90%** | DTI **21-30%** | Docs: **MISSING_NOTE**
 
@@ -345,7 +345,7 @@ The predictive models and anomaly detectors isolated the following primary risk 
 #### 1. Executive Summary & Recommended Action
 - **Recommended Action**: **`ESCALATE_DOC_REVIEW`** (Confidence: **0.95**)
 - **Composite Anomaly Score**: `0.2051` | **Primary Exception**: `DOCUMENT_GAP`
-- **Evidence Breakdown**: ML Layer ($w_1 \cdot S_{\text{ML}}$): `0.288` | Rule Layer ($w_2 \cdot S_{\text{rule}}$): `0.200` | Servicer Layer ($w_3 \cdot S_{\text{servicer}}$): `0.000` | DQ Layer ($w_4 \cdot S_{\text{DQ}}$): `0.200`
+- **Evidence Breakdown**: ML Layer (w₁·S_ML): `0.288` | Rule Layer (w₂·S_rule): `0.200` | Servicer Layer (w₃·S_servicer): `0.000` | DQ Layer (w₄·S_DQ): `0.200`
 - **Account Snapshot**: Balance **$144,500.02** ($150,000.00 Orig) | Status: **CURRENT** (0 DPD) | Servicer: **Newrez LLC**
 - **Borrower Profile**: Credit **741-800 (Very Good)** | LTV **61-75%** | DTI **<=20%** | Docs: **MISSING_NOTE**
 
@@ -387,7 +387,7 @@ The predictive models and anomaly detectors isolated the following primary risk 
 #### 1. Executive Summary & Recommended Action
 - **Recommended Action**: **`ESCALATE_DOC_REVIEW`** (Confidence: **0.95**)
 - **Composite Anomaly Score**: `0.2313` | **Primary Exception**: `DOCUMENT_GAP`
-- **Evidence Breakdown**: ML Layer ($w_1 \cdot S_{\text{ML}}$): `0.381` | Rule Layer ($w_2 \cdot S_{\text{rule}}$): `0.200` | Servicer Layer ($w_3 \cdot S_{\text{servicer}}$): `0.000` | DQ Layer ($w_4 \cdot S_{\text{DQ}}$): `0.000`
+- **Evidence Breakdown**: ML Layer (w₁·S_ML): `0.381` | Rule Layer (w₂·S_rule): `0.200` | Servicer Layer (w₃·S_servicer): `0.000` | DQ Layer (w₄·S_DQ): `0.000`
 - **Account Snapshot**: Balance **$139,830.31** ($147,000.00 Orig) | Status: **CURRENT** (0 DPD) | Servicer: **Freedom Mortgage Corporation**
 - **Borrower Profile**: Credit **741-800 (Very Good)** | LTV **91-95%** | DTI **41-45%** | Docs: **UNVERIFIED_APPRAISAL**
 
@@ -429,7 +429,7 @@ The predictive models and anomaly detectors isolated the following primary risk 
 #### 1. Executive Summary & Recommended Action
 - **Recommended Action**: **`OVERRIDE_SERVICER`** (Confidence: **0.98**)
 - **Composite Anomaly Score**: `0.3551` | **Primary Exception**: `NONE`
-- **Evidence Breakdown**: ML Layer ($w_1 \cdot S_{\text{ML}}$): `0.604` | Rule Layer ($w_2 \cdot S_{\text{rule}}$): `0.000` | Servicer Layer ($w_3 \cdot S_{\text{servicer}}$): `1.000` | DQ Layer ($w_4 \cdot S_{\text{DQ}}$): `0.000`
+- **Evidence Breakdown**: ML Layer (w₁·S_ML): `0.604` | Rule Layer (w₂·S_rule): `0.000` | Servicer Layer (w₃·S_servicer): `1.000` | DQ Layer (w₄·S_DQ): `0.000`
 - **Account Snapshot**: Balance **$71,668.27** ($76,000.00 Orig) | Status: **30DPD** (30 DPD) | Servicer: **Newrez LLC**
 - **Borrower Profile**: Credit **681-740 (Good)** | LTV **91-95%** | DTI **41-45%** | Docs: **VERIFIED**
 
@@ -471,7 +471,7 @@ The predictive models and anomaly detectors isolated the following primary risk 
 #### 1. Executive Summary & Recommended Action
 - **Recommended Action**: **`OVERRIDE_SERVICER`** (Confidence: **0.8**)
 - **Composite Anomaly Score**: `0.3165` | **Primary Exception**: `SERVICER_CONFLICT`
-- **Evidence Breakdown**: ML Layer ($w_1 \cdot S_{\text{ML}}$): `0.424` | Rule Layer ($w_2 \cdot S_{\text{rule}}$): `0.350` | Servicer Layer ($w_3 \cdot S_{\text{servicer}}$): `0.000` | DQ Layer ($w_4 \cdot S_{\text{DQ}}$): `0.000`
+- **Evidence Breakdown**: ML Layer (w₁·S_ML): `0.424` | Rule Layer (w₂·S_rule): `0.350` | Servicer Layer (w₃·S_servicer): `0.000` | DQ Layer (w₄·S_DQ): `0.000`
 - **Account Snapshot**: Balance **$90,041.87** ($94,000.00 Orig) | Status: **CURRENT** (0 DPD) | Servicer: **JPMorgan Chase Bank, N.A.**
 - **Borrower Profile**: Credit **681-740 (Good)** | LTV **76-80%** | DTI **31-40%** | Docs: **VERIFIED**
 
@@ -513,7 +513,7 @@ The predictive models and anomaly detectors isolated the following primary risk 
 #### 1. Executive Summary & Recommended Action
 - **Recommended Action**: **`OVERRIDE_SERVICER`** (Confidence: **0.8**)
 - **Composite Anomaly Score**: `0.2841` | **Primary Exception**: `SERVICER_CONFLICT`
-- **Evidence Breakdown**: ML Layer ($w_1 \cdot S_{\text{ML}}$): `0.335` | Rule Layer ($w_2 \cdot S_{\text{rule}}$): `0.350` | Servicer Layer ($w_3 \cdot S_{\text{servicer}}$): `0.000` | DQ Layer ($w_4 \cdot S_{\text{DQ}}$): `0.000`
+- **Evidence Breakdown**: ML Layer (w₁·S_ML): `0.335` | Rule Layer (w₂·S_rule): `0.350` | Servicer Layer (w₃·S_servicer): `0.000` | DQ Layer (w₄·S_DQ): `0.000`
 - **Account Snapshot**: Balance **$126,231.47** ($132,000.00 Orig) | Status: **CURRENT** (0 DPD) | Servicer: **Freedom Mortgage Corporation**
 - **Borrower Profile**: Credit **741-800 (Very Good)** | LTV **91-95%** | DTI **41-45%** | Docs: **VERIFIED**
 
@@ -555,7 +555,7 @@ The predictive models and anomaly detectors isolated the following primary risk 
 #### 1. Executive Summary & Recommended Action
 - **Recommended Action**: **`OVERRIDE_SERVICER`** (Confidence: **0.8**)
 - **Composite Anomaly Score**: `0.2750` | **Primary Exception**: `SERVICER_CONFLICT`
-- **Evidence Breakdown**: ML Layer ($w_1 \cdot S_{\text{ML}}$): `0.310` | Rule Layer ($w_2 \cdot S_{\text{rule}}$): `0.350` | Servicer Layer ($w_3 \cdot S_{\text{servicer}}$): `0.000` | DQ Layer ($w_4 \cdot S_{\text{DQ}}$): `0.000`
+- **Evidence Breakdown**: ML Layer (w₁·S_ML): `0.310` | Rule Layer (w₂·S_rule): `0.350` | Servicer Layer (w₃·S_servicer): `0.000` | DQ Layer (w₄·S_DQ): `0.000`
 - **Account Snapshot**: Balance **$161,443.37** ($184,000.00 Orig) | Status: **CURRENT** (0 DPD) | Servicer: **Newrez LLC**
 - **Borrower Profile**: Credit **741-800 (Very Good)** | LTV **76-80%** | DTI **41-45%** | Docs: **VERIFIED**
 
@@ -597,7 +597,7 @@ The predictive models and anomaly detectors isolated the following primary risk 
 #### 1. Executive Summary & Recommended Action
 - **Recommended Action**: **`REQUEST_CURE`** (Confidence: **0.98**)
 - **Composite Anomaly Score**: `0.3797` | **Primary Exception**: `STATUS_CONFLICT`
-- **Evidence Breakdown**: ML Layer ($w_1 \cdot S_{\text{ML}}$): `0.598` | Rule Layer ($w_2 \cdot S_{\text{rule}}$): `0.350` | Servicer Layer ($w_3 \cdot S_{\text{servicer}}$): `0.000` | DQ Layer ($w_4 \cdot S_{\text{DQ}}$): `0.000`
+- **Evidence Breakdown**: ML Layer (w₁·S_ML): `0.598` | Rule Layer (w₂·S_rule): `0.350` | Servicer Layer (w₃·S_servicer): `0.000` | DQ Layer (w₄·S_DQ): `0.000`
 - **Account Snapshot**: Balance **$197,831.23** ($220,000.00 Orig) | Status: **CURRENT** (90 DPD) | Servicer: **Rocket Mortgage, LLC**
 - **Borrower Profile**: Credit **741-800 (Very Good)** | LTV **<=60%** | DTI **21-30%** | Docs: **VERIFIED**
 
@@ -639,7 +639,7 @@ The predictive models and anomaly detectors isolated the following primary risk 
 #### 1. Executive Summary & Recommended Action
 - **Recommended Action**: **`REQUEST_CURE`** (Confidence: **0.98**)
 - **Composite Anomaly Score**: `0.3869` | **Primary Exception**: `STATUS_CONFLICT`
-- **Evidence Breakdown**: ML Layer ($w_1 \cdot S_{\text{ML}}$): `0.618` | Rule Layer ($w_2 \cdot S_{\text{rule}}$): `0.350` | Servicer Layer ($w_3 \cdot S_{\text{servicer}}$): `0.000` | DQ Layer ($w_4 \cdot S_{\text{DQ}}$): `0.000`
+- **Evidence Breakdown**: ML Layer (w₁·S_ML): `0.618` | Rule Layer (w₂·S_rule): `0.350` | Servicer Layer (w₃·S_servicer): `0.000` | DQ Layer (w₄·S_DQ): `0.000`
 - **Account Snapshot**: Balance **$60,319.69** ($64,000.00 Orig) | Status: **CURRENT** (90 DPD) | Servicer: **Freedom Mortgage Corporation**
 - **Borrower Profile**: Credit **801+ (Exceptional)** | LTV **76-80%** | DTI **46-50%** | Docs: **VERIFIED**
 
@@ -681,7 +681,7 @@ The predictive models and anomaly detectors isolated the following primary risk 
 #### 1. Executive Summary & Recommended Action
 - **Recommended Action**: **`REQUEST_CURE`** (Confidence: **0.98**)
 - **Composite Anomaly Score**: `0.3851` | **Primary Exception**: `STATUS_CONFLICT`
-- **Evidence Breakdown**: ML Layer ($w_1 \cdot S_{\text{ML}}$): `0.592` | Rule Layer ($w_2 \cdot S_{\text{rule}}$): `0.350` | Servicer Layer ($w_3 \cdot S_{\text{servicer}}$): `0.000` | DQ Layer ($w_4 \cdot S_{\text{DQ}}$): `0.200`
+- **Evidence Breakdown**: ML Layer (w₁·S_ML): `0.592` | Rule Layer (w₂·S_rule): `0.350` | Servicer Layer (w₃·S_servicer): `0.000` | DQ Layer (w₄·S_DQ): `0.200`
 - **Account Snapshot**: Balance **$86,010.80** ($109,000.00 Orig) | Status: **CURRENT** (90 DPD) | Servicer: **Rocket Mortgage, LLC**
 - **Borrower Profile**: Credit **801+ (Exceptional)** | LTV **61-75%** | DTI **31-40%** | Docs: **VERIFIED**
 
@@ -723,7 +723,7 @@ The predictive models and anomaly detectors isolated the following primary risk 
 #### 1. Executive Summary & Recommended Action
 - **Recommended Action**: **`REQUEST_CURE`** (Confidence: **0.8**)
 - **Composite Anomaly Score**: `0.3106` | **Primary Exception**: `INVALID_TERM`
-- **Evidence Breakdown**: ML Layer ($w_1 \cdot S_{\text{ML}}$): `0.408` | Rule Layer ($w_2 \cdot S_{\text{rule}}$): `0.350` | Servicer Layer ($w_3 \cdot S_{\text{servicer}}$): `0.000` | DQ Layer ($w_4 \cdot S_{\text{DQ}}$): `0.000`
+- **Evidence Breakdown**: ML Layer (w₁·S_ML): `0.408` | Rule Layer (w₂·S_rule): `0.350` | Servicer Layer (w₃·S_servicer): `0.000` | DQ Layer (w₄·S_DQ): `0.000`
 - **Account Snapshot**: Balance **$221,116.78** ($235,000.00 Orig) | Status: **CURRENT** (0 DPD) | Servicer: **Freedom Mortgage Corporation**
 - **Borrower Profile**: Credit **801+ (Exceptional)** | LTV **61-75%** | DTI **41-45%** | Docs: **VERIFIED**
 
@@ -765,7 +765,7 @@ The predictive models and anomaly detectors isolated the following primary risk 
 #### 1. Executive Summary & Recommended Action
 - **Recommended Action**: **`ACCEPT_PRIMARY`** (Confidence: **0.95**)
 - **Composite Anomaly Score**: `0.3228` | **Primary Exception**: `STALE_RECORD`
-- **Evidence Breakdown**: ML Layer ($w_1 \cdot S_{\text{ML}}$): `0.632` | Rule Layer ($w_2 \cdot S_{\text{rule}}$): `0.200` | Servicer Layer ($w_3 \cdot S_{\text{servicer}}$): `0.000` | DQ Layer ($w_4 \cdot S_{\text{DQ}}$): `0.000`
+- **Evidence Breakdown**: ML Layer (w₁·S_ML): `0.632` | Rule Layer (w₂·S_rule): `0.200` | Servicer Layer (w₃·S_servicer): `0.000` | DQ Layer (w₄·S_DQ): `0.000`
 - **Account Snapshot**: Balance **$163,808.45** ($172,000.00 Orig) | Status: **30DPD** (30 DPD) | Servicer: **Rocket Mortgage, LLC**
 - **Borrower Profile**: Credit **621-680 (Fair)** | LTV **81-90%** | DTI **41-45%** | Docs: **VERIFIED**
 
@@ -807,7 +807,7 @@ The predictive models and anomaly detectors isolated the following primary risk 
 #### 1. Executive Summary & Recommended Action
 - **Recommended Action**: **`ACCEPT_PRIMARY`** (Confidence: **0.95**)
 - **Composite Anomaly Score**: `0.1871` | **Primary Exception**: `STALE_RECORD`
-- **Evidence Breakdown**: ML Layer ($w_1 \cdot S_{\text{ML}}$): `0.260` | Rule Layer ($w_2 \cdot S_{\text{rule}}$): `0.200` | Servicer Layer ($w_3 \cdot S_{\text{servicer}}$): `0.000` | DQ Layer ($w_4 \cdot S_{\text{DQ}}$): `0.000`
+- **Evidence Breakdown**: ML Layer (w₁·S_ML): `0.260` | Rule Layer (w₂·S_rule): `0.200` | Servicer Layer (w₃·S_servicer): `0.000` | DQ Layer (w₄·S_DQ): `0.000`
 - **Account Snapshot**: Balance **$114,537.16** ($122,000.00 Orig) | Status: **CURRENT** (0 DPD) | Servicer: **Nationstar Mortgage LLC (Mr. Cooper)**
 - **Borrower Profile**: Credit **621-680 (Fair)** | LTV **91-95%** | DTI **31-40%** | Docs: **VERIFIED**
 
@@ -849,7 +849,7 @@ The predictive models and anomaly detectors isolated the following primary risk 
 #### 1. Executive Summary & Recommended Action
 - **Recommended Action**: **`ACCEPT_PRIMARY`** (Confidence: **0.95**)
 - **Composite Anomaly Score**: `0.1920` | **Primary Exception**: `STALE_RECORD`
-- **Evidence Breakdown**: ML Layer ($w_1 \cdot S_{\text{ML}}$): `0.273` | Rule Layer ($w_2 \cdot S_{\text{rule}}$): `0.200` | Servicer Layer ($w_3 \cdot S_{\text{servicer}}$): `0.000` | DQ Layer ($w_4 \cdot S_{\text{DQ}}$): `0.000`
+- **Evidence Breakdown**: ML Layer (w₁·S_ML): `0.273` | Rule Layer (w₂·S_rule): `0.200` | Servicer Layer (w₃·S_servicer): `0.000` | DQ Layer (w₄·S_DQ): `0.000`
 - **Account Snapshot**: Balance **$196,125.80** ($205,000.00 Orig) | Status: **CURRENT** (0 DPD) | Servicer: **Pennymac Loan Services, LLC**
 - **Borrower Profile**: Credit **741-800 (Very Good)** | LTV **61-75%** | DTI **46-50%** | Docs: **VERIFIED**
 
@@ -891,7 +891,7 @@ The predictive models and anomaly detectors isolated the following primary risk 
 #### 1. Executive Summary & Recommended Action
 - **Recommended Action**: **`ACCEPT_PRIMARY`** (Confidence: **0.95**)
 - **Composite Anomaly Score**: `0.2480` | **Primary Exception**: `STALE_RECORD`
-- **Evidence Breakdown**: ML Layer ($w_1 \cdot S_{\text{ML}}$): `0.427` | Rule Layer ($w_2 \cdot S_{\text{rule}}$): `0.200` | Servicer Layer ($w_3 \cdot S_{\text{servicer}}$): `0.000` | DQ Layer ($w_4 \cdot S_{\text{DQ}}$): `0.000`
+- **Evidence Breakdown**: ML Layer (w₁·S_ML): `0.427` | Rule Layer (w₂·S_rule): `0.200` | Servicer Layer (w₃·S_servicer): `0.000` | DQ Layer (w₄·S_DQ): `0.000`
 - **Account Snapshot**: Balance **$62,949.31** ($68,000.00 Orig) | Status: **CURRENT** (0 DPD) | Servicer: **Rocket Mortgage, LLC**
 - **Borrower Profile**: Credit **681-740 (Good)** | LTV **81-90%** | DTI **<=20%** | Docs: **VERIFIED**
 
@@ -933,7 +933,7 @@ The predictive models and anomaly detectors isolated the following primary risk 
 #### 1. Executive Summary & Recommended Action
 - **Recommended Action**: **`AUTO_APPROVE`** (Confidence: **0.91**)
 - **Composite Anomaly Score**: `0.1409` | **Primary Exception**: `NONE`
-- **Evidence Breakdown**: ML Layer ($w_1 \cdot S_{\text{ML}}$): `0.387` | Rule Layer ($w_2 \cdot S_{\text{rule}}$): `0.000` | Servicer Layer ($w_3 \cdot S_{\text{servicer}}$): `0.000` | DQ Layer ($w_4 \cdot S_{\text{DQ}}$): `0.000`
+- **Evidence Breakdown**: ML Layer (w₁·S_ML): `0.387` | Rule Layer (w₂·S_rule): `0.000` | Servicer Layer (w₃·S_servicer): `0.000` | DQ Layer (w₄·S_DQ): `0.000`
 - **Account Snapshot**: Balance **$257,924.24** ($273,000.00 Orig) | Status: **CURRENT** (0 DPD) | Servicer: **Pennymac Loan Services, LLC**
 - **Borrower Profile**: Credit **741-800 (Very Good)** | LTV **91-95%** | DTI **<=20%** | Docs: **VERIFIED**
 
@@ -975,7 +975,7 @@ The predictive models and anomaly detectors isolated the following primary risk 
 #### 1. Executive Summary & Recommended Action
 - **Recommended Action**: **`AUTO_APPROVE`** (Confidence: **0.91**)
 - **Composite Anomaly Score**: `0.1475` | **Primary Exception**: `NONE`
-- **Evidence Breakdown**: ML Layer ($w_1 \cdot S_{\text{ML}}$): `0.405` | Rule Layer ($w_2 \cdot S_{\text{rule}}$): `0.000` | Servicer Layer ($w_3 \cdot S_{\text{servicer}}$): `0.000` | DQ Layer ($w_4 \cdot S_{\text{DQ}}$): `0.000`
+- **Evidence Breakdown**: ML Layer (w₁·S_ML): `0.405` | Rule Layer (w₂·S_rule): `0.000` | Servicer Layer (w₃·S_servicer): `0.000` | DQ Layer (w₄·S_DQ): `0.000`
 - **Account Snapshot**: Balance **$169,355.46** ($176,000.00 Orig) | Status: **30DPD** (30 DPD) | Servicer: **Wells Fargo Bank, N.A.**
 - **Borrower Profile**: Credit **741-800 (Very Good)** | LTV **91-95%** | DTI **31-40%** | Docs: **VERIFIED**
 
@@ -1017,7 +1017,7 @@ The predictive models and anomaly detectors isolated the following primary risk 
 #### 1. Executive Summary & Recommended Action
 - **Recommended Action**: **`AUTO_APPROVE`** (Confidence: **0.95**)
 - **Composite Anomaly Score**: `0.0692` | **Primary Exception**: `NONE`
-- **Evidence Breakdown**: ML Layer ($w_1 \cdot S_{\text{ML}}$): `0.190` | Rule Layer ($w_2 \cdot S_{\text{rule}}$): `0.000` | Servicer Layer ($w_3 \cdot S_{\text{servicer}}$): `0.000` | DQ Layer ($w_4 \cdot S_{\text{DQ}}$): `0.000`
+- **Evidence Breakdown**: ML Layer (w₁·S_ML): `0.190` | Rule Layer (w₂·S_rule): `0.000` | Servicer Layer (w₃·S_servicer): `0.000` | DQ Layer (w₄·S_DQ): `0.000`
 - **Account Snapshot**: Balance **$346,904.06** ($360,000.00 Orig) | Status: **CURRENT** (0 DPD) | Servicer: **Freedom Mortgage Corporation**
 - **Borrower Profile**: Credit **741-800 (Very Good)** | LTV **61-75%** | DTI **21-30%** | Docs: **VERIFIED**
 
@@ -1059,7 +1059,7 @@ The predictive models and anomaly detectors isolated the following primary risk 
 #### 1. Executive Summary & Recommended Action
 - **Recommended Action**: **`AUTO_APPROVE`** (Confidence: **0.95**)
 - **Composite Anomaly Score**: `0.0732` | **Primary Exception**: `NONE`
-- **Evidence Breakdown**: ML Layer ($w_1 \cdot S_{\text{ML}}$): `0.201` | Rule Layer ($w_2 \cdot S_{\text{rule}}$): `0.000` | Servicer Layer ($w_3 \cdot S_{\text{servicer}}$): `0.000` | DQ Layer ($w_4 \cdot S_{\text{DQ}}$): `0.000`
+- **Evidence Breakdown**: ML Layer (w₁·S_ML): `0.201` | Rule Layer (w₂·S_rule): `0.000` | Servicer Layer (w₃·S_servicer): `0.000` | DQ Layer (w₄·S_DQ): `0.000`
 - **Account Snapshot**: Balance **$144,175.95** ($152,000.00 Orig) | Status: **CURRENT** (0 DPD) | Servicer: **Newrez LLC**
 - **Borrower Profile**: Credit **741-800 (Very Good)** | LTV **81-90%** | DTI **21-30%** | Docs: **VERIFIED**
 

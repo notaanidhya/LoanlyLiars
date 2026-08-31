@@ -20,7 +20,7 @@ The **Loan Performance Intelligence Engine** is a multi-tier, hybrid predictive 
 | **Duration Risk Classifier** | XGBoost + Isotonic Calibration | 12M Prepayment Velocity | `max_depth=5`, `learning_rate=0.05`, `scale_pos_weight=1.9x` |
 | **State Transition Model** | Multi-Class XGBoost | 1-Month Ahead Roll-State (`CURRENT`, `30DPD`, `60DPD`, `90PLUS_DPD`, `PREPAID`) | `objective=multi:softprob`, `num_class=5` |
 | **Survival & Hazard Engine** | Kaplan-Meier & Cox PH | Time-to-Default & Prepayment Curves | `penalizer=0.1` (Ridge regularization), C-stat: `0.6866` |
-| **Anomaly Detection Layer** | Hybrid Arbitrator (Isolation Forest + Deterministic Rules + Servicer Reconciler) | Record-level Anomaly Score & Action Precedence | Weights: $w_{\text{Rule}}=46.5\%$, $w_{\text{ML}}=34.4\%$, $w_{\text{Serv}}=15.2\%$, $w_{\text{DQ}}=3.8\%$ |
+| **Anomaly Detection Layer** | Hybrid Arbitrator (Isolation Forest + Deterministic Rules + Servicer Reconciler) | Record-level Anomaly Score & Action Precedence | Optimal Weights: w_Rule=46.3%, w_ML=36.4%, w_Servicer=13.5%, w_DQ=3.8% |
 | **Explainability Layer** | TreeSHAP (`shap.TreeExplainer`) | Global feature beeswarms & local waterfall attribution | Directional attribution (positive log-odds vs. negative path length) |
 | **Reviewer Copilot** | Grounded LLM + Knowledge Retrieval | Structured reviewer memos & hallucination auditing | Grounded on `data_dictionary.md` and `validation_rules.json` |
 
@@ -44,9 +44,9 @@ The **Loan Performance Intelligence Engine** is a multi-tier, hybrid predictive 
 
 ### Evaluated Risk Dimensions
 The model's performance and stability are audited across five primary structural dimensions:
-1. **Credit Score Bands**: Subprime ($\le 620$), Fair ($621-680$), Good ($681-740$), Very Good ($741-800$), Exceptional ($801+$).
-2. **Collateral Leverage (LTV Bands)**: Low ($\le 60\%$), Moderate ($61-75\%$), High ($76-80\%$, $81-90\%$), Elevated ($91-95\%$), Super-High ($>95\%$).
-3. **Debt-to-Income (DTI Bands)**: $\le 20\%$, $21-30\%$, $31-40\%$, $41-45\%$, $46-50\%$, $>50\%$.
+1. **Credit Score Bands**: Subprime (<= 620), Fair (621-680), Good (681-740), Very Good (741-800), Exceptional (801+).
+2. **Collateral Leverage (LTV Bands)**: Low (<= 60%), Moderate (61-75%), High (76-80%, 81-90%), Elevated (91-95%), Super-High (>95%).
+3. **Debt-to-Income (DTI Bands)**: <= 20%, 21-30%, 31-40%, 41-45%, 46-50%, >50%.
 4. **Geography (Top States)**: CA, TX, FL, NY, IL, NC, GA, VA, NJ, OH.
 5. **Servicer Entities**: Rocket, Wells Fargo, JPMorgan Chase, Pennymac, Nationstar (Mr. Cooper), Newrez, Freedom, U.S. Bank.
 
@@ -73,8 +73,8 @@ The model's performance and stability are audited across five primary structural
 ## 5. Training, Validation & Leakage Controls
 
 ### Dataset Profile
-- **Training Cohort**: 407,733 monthly records ($\le 2021-06$) across 20,000 unique loans.
-- **Holdout Test Set**: 304,374 monthly records ($> 2021-06$).
+- **Training Cohort**: 407,733 monthly records (<= 2021-06) across 20,000 unique loans.
+- **Holdout Test Set**: 304,374 monthly records (> 2021-06).
 
 ### Leakage Eradication Protocols
 1. **Strict Chronological 3-Way Split**: Data is ordered globally by `reporting_month`. Split into Train (70%), Calibration (15%), and untouched Validation (15%). Per-loan history and lag features are computed prior to the calendar-time split boundary.
@@ -94,6 +94,6 @@ The model's performance and stability are audited across five primary structural
 
 ## 7. Caveats, Known Limitations & Operational Guidelines
 
-1. **Macroeconomic Sensitivity**: In severe stagflation scenarios ($>+200\text{ bps}$ interest rate shock and $>-15\%$ HPA), non-linear default accelerations should be calibrated against stress scenarios generated in Phase 5.
+1. **Macroeconomic Sensitivity**: In severe stagflation scenarios (> +200 bps interest rate shock and > -15% HPA), non-linear default accelerations should be calibrated against stress scenarios generated in Phase 5.
 2. **Human-in-the-Loop Requirement**: All LLM Reviewer Copilot memos are advisory recommendations. Secondary credit committees must maintain final override and approval authority.
 3. **Periodic Recalibration**: Anomaly weights and Isotonic calibration curves should be recalibrated quarterly to adapt to changing servicer reporting practices and interest rate environments.
