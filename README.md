@@ -1,4 +1,4 @@
-# 🏛️ Loan Performance Intelligence Engine
+# Loan Performance Intelligence Engine
 
 [![Live Web Platform](https://img.shields.io/badge/Live%20Platform-loanly--liars.vercel.app-0052FF?style=for-the-badge&logo=vercel&logoColor=white)](https://loanly-liars.vercel.app/)
 [![Competition](https://img.shields.io/badge/Intain%20FinTech%20Challenge-AI%20Track%202026-gold?style=for-the-badge)](https://loanly-liars.vercel.app/)
@@ -12,26 +12,26 @@ Developed for the **Intain Campus FinTech Challenge 2026 (AI Track)**, this plat
 
 ---
 
-## 🌐 Live Platform & Competition Deliverables
+## Live Platform & Competition Deliverables
 
 | Deliverable Artifact | Description | Direct Access Link |
 | :--- | :--- | :--- |
-| 🚀 **Live Interactive Web Platform** | Full-stack interactive React 18 + Vite analytics dashboard | [**loanly-liars.vercel.app**](https://loanly-liars.vercel.app/) |
-| 📊 **Final Competition Submission** | 304,374 scored holdout records, 15 columns, 0 nulls | [`submission.csv`](./submission.csv) |
-| 🪪 **Formal Model Card** | Industry-standard model governance (Mitchell et al., 2019) | [`reports/model_card.md`](./reports/model_card.md) |
-| 📈 **Model Performance & Survival Report** | Held-out validation metrics, baseline comparisons & Cox PH | [`reports/model_performance_report.md`](./reports/model_performance_report.md) |
-| 🔍 **Anomaly & Exception Report** | 4-layer weight calibration, 24 stratified reviewer case cards | [`reports/anomaly_detection_report.md`](./reports/anomaly_detection_report.md) |
-| 🌳 **TreeSHAP Explainability Report** | Global beeswarms, dual-risk dynamics & 20 waterfall cards | [`reports/model_explainability_report.md`](./reports/model_explainability_report.md) |
-| 🌪️ **Scenario & Stress Simulation Report** | Multi-horizon capital loss-at-risk & Markov migration | [`reports/scenario_simulation_report.md`](./reports/scenario_simulation_report.md) |
-| 🛡️ **LLM Copilot & Governance Audit Report** | Grounded audit memos, ISO logs & Hallucination Catalog | [`reports/llm_copilot_audit_report.md`](./reports/llm_copilot_audit_report.md) |
-| 📋 **Data Intelligence & Profiling Report** | Column distributions, MCAR/MNAR missingness & drift | [`reports/data_intelligence_report.md`](./reports/data_intelligence_report.md) |
-| 📖 **Data Schema & Dictionary** | Plain-English field definitions & metadata specs | [`data/processed/data_dictionary.md`](./data/processed/data_dictionary.md) |
-| ⚙️ **Validation Rules Engine** | Contractual & operational rule definitions (VR-001..VR-008) | [`data/processed/validation_rules.json`](./data/processed/validation_rules.json) |
-| 📝 **AI Development Log & Trajectory** | Detailed prompts, accepted/rejected proposals & milestones | [`logs/ai_development_log.md`](./logs/ai_development_log.md) |
+| **Live Interactive Web Platform** | Full-stack interactive React 18 + Vite analytics dashboard | [**loanly-liars.vercel.app**](https://loanly-liars.vercel.app/) |
+| **Final Competition Submission** | 304,374 scored holdout records, 15 columns, 0 nulls | [`submission.csv`](./submission.csv) |
+| **Formal Model Card** | Industry-standard model governance (Mitchell et al., 2019) | [`reports/model_card.md`](./reports/model_card.md) |
+| **Model Performance & Survival Report** | Held-out validation metrics, baseline comparisons & Cox PH | [`reports/model_performance_report.md`](./reports/model_performance_report.md) |
+| **Anomaly & Exception Report** | 4-layer weight calibration, 24 stratified reviewer case cards | [`reports/anomaly_detection_report.md`](./reports/anomaly_detection_report.md) |
+| **TreeSHAP Explainability Report** | Global beeswarms, dual-risk dynamics & 20 waterfall cards | [`reports/model_explainability_report.md`](./reports/model_explainability_report.md) |
+| **Scenario & Stress Simulation Report** | Multi-horizon capital loss-at-risk & Markov migration | [`reports/scenario_simulation_report.md`](./reports/scenario_simulation_report.md) |
+| **LLM Copilot & Governance Audit Report** | Grounded audit memos, ISO logs & Hallucination Catalog | [`reports/llm_copilot_audit_report.md`](./reports/llm_copilot_audit_report.md) |
+| **Data Intelligence & Profiling Report** | Column distributions, MCAR/MNAR missingness & drift | [`reports/data_intelligence_report.md`](./reports/data_intelligence_report.md) |
+| **Data Schema & Dictionary** | Plain-English field definitions & metadata specs | [`data/processed/data_dictionary.md`](./data/processed/data_dictionary.md) |
+| **Validation Rules Engine** | Contractual & operational rule definitions (VR-001..VR-008) | [`data/processed/validation_rules.json`](./data/processed/validation_rules.json) |
+| **AI Development Log & Trajectory** | Detailed prompts, accepted/rejected proposals & milestones | [`logs/ai_development_log.md`](./logs/ai_development_log.md) |
 
 ---
 
-## 🏛️ System Architecture
+## System Architecture
 
 The pipeline processes raw loan portfolios through an advanced time-aware feature engineering layer before branching into multi-outcome supervised predictive models. The system arbitrates anomalies in real-time, extracts local feature attributions via TreeSHAP, and synthesizes these insights into an LLM-assisted reviewer copilot—all protected by deterministic hallucination guardrails.
 
@@ -70,7 +70,7 @@ graph TD
 
 ---
 
-## 🏆 Key Achievements & Technical Feats
+## Key Achievements & Technical Feats
 
 1. **Massive-Scale Zero-Leakage Dataset Processing**:
    - Ingested and structured **712,107 monthly panel records across 20,000 unique loans** from Freddie Mac Single-Family loan-level historical benchmarks.
@@ -109,7 +109,7 @@ graph TD
 
 ---
 
-## 📊 Quantitative Benchmark Results
+## Quantitative Benchmark Results
 
 ### 1. Binary Classification Models (Untouched Held-Out Validation Cohort)
 
@@ -142,7 +142,7 @@ graph TD
 
 ---
 
-## 🔍 Hybrid Anomaly Arbitration & Action Precedence
+## Hybrid Anomaly Arbitration & Action Precedence
 
 The Anomaly Arbitration Engine fuses 4 continuous evidence streams into an optimal composite anomaly score $S_{\text{anomaly}}$:
 
@@ -169,7 +169,7 @@ Optimal Calibrated Weights (Differential Evolution):
 
 ---
 
-## 🌪️ Macroeconomic Stress & Capital Simulation
+## Macroeconomic Stress & Capital Simulation
 
 The simulation engine evaluates the portfolio under three governing macroeconomic trajectories:
 - **Base Case**: Stable rates, $+2.5\%$ HPA, $1.0\times$ baseline hazard.
@@ -186,7 +186,7 @@ The simulation engine evaluates the portfolio under three governing macroeconomi
 
 ---
 
-## 🛡️ LLM Reviewer Copilot & Hallucination Guardrails
+## LLM Reviewer Copilot & Hallucination Guardrails
 
 The Reviewer Copilot synthesizes complex ML predictions, anomaly scores, and TreeSHAP attribution drivers into natural language memos. To guarantee safety in production financial pipelines, the copilot enforces a **Hallucination Auditor Guardrail** evaluated against 4 audited failure modes:
 
@@ -199,7 +199,7 @@ The Reviewer Copilot synthesizes complex ML predictions, anomaly scores, and Tre
 
 ---
 
-## 🚀 Quick Start & Reproducibility Guide
+## Quick Start & Reproducibility Guide
 
 ### 1. Prerequisites & Environment Setup
 Ensure Python 3.10+ and Node.js 18+ are installed. Clone the repository and install dependencies:
@@ -260,7 +260,7 @@ npm run dev
 
 ---
 
-## 📁 Repository Structure
+## Repository Structure
 
 ```
 .
@@ -302,7 +302,7 @@ npm run dev
 
 ---
 
-## 📜 Compliance, Governance & Fair Lending
+## Compliance, Governance & Fair Lending
 
 - **Fair Lending Safeguards**: The modeling universe strictly excludes protected class attributes (race, gender, marital status, national origin) in accordance with ECOA / FCRA principles.
 - **Explainability & Adverse Action**: Every scored record outputs 3 distinct directional TreeSHAP drivers (`top_driver_1`, `top_driver_2`, `top_driver_3`), providing secondary-market auditors and underwriters with complete decision transparency.
@@ -310,7 +310,7 @@ npm run dev
 
 ---
 
-## 👥 Team & Acknowledgments
+## Team & Acknowledgments
 
 Developed by **Team LoanlyLiars** for the **Intain Campus FinTech Challenge 2026 (AI Track)**. Built in alignment with the official benchmark guidelines and loan-level structured finance analytics standards.
 
