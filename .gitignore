@@ -95,6 +95,11 @@ Thumbs.db
 desktop.ini
 
 # ==========================================
-# Hackathon Provided / Unnecessary Files
+# Hackathon Provided / Unnecessary Files / Archives
 # ==========================================
 Intain_AI_Track_Problem_Statement.md
+*.zip
+*.pptx
+scripts/generate_presentation.py
+
+
