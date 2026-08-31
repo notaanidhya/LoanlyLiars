@@ -1,0 +1,76 @@
+{
+  "scenarios": [
+    {
+      "id": "base",
+      "name": "Base Macroeconomic Scenario",
+      "rate_shock": "0 bps",
+      "hpa_shock": "+2.5%",
+      "unemployment_shock": "0.0%",
+      "default_multiplier": "1.00x",
+      "prepay_multiplier": "1.00x",
+      "default_12m": "2.57%",
+      "prepay_12m": "35.11%",
+      "cumulative_default_36m": "6.40%",
+      "cumulative_prepay_36m": "70.71%",
+      "driver_summary": "Stable interest rate environment with steady home price appreciation (+2.5%) and historical baseline prepayment velocity."
+    },
+    {
+      "id": "adverse_credit",
+      "name": "Adverse Credit Stress Scenario",
+      "rate_shock": "+150 bps",
+      "hpa_shock": "-10.0%",
+      "unemployment_shock": "+3.5%",
+      "default_multiplier": "2.30x",
+      "prepay_multiplier": "0.65x",
+      "default_12m": "2.71%",
+      "prepay_12m": "31.43%",
+      "cumulative_default_36m": "6.74%",
+      "cumulative_prepay_36m": "65.75%",
+      "driver_summary": "Stagflationary stress driven by higher mortgage rates (+150 bps), negative equity contractions (-10% HPA), and elevated credit defaults across high-LTV cohorts."
+    },
+    {
+      "id": "high_prepayment",
+      "name": "High Prepayment / Refinance Wave",
+      "rate_shock": "-150 bps",
+      "hpa_shock": "+6.0%",
+      "unemployment_shock": "-0.5%",
+      "default_multiplier": "0.85x",
+      "prepay_multiplier": "2.75x",
+      "default_12m": "1.63%",
+      "prepay_12m": "77.38%",
+      "cumulative_default_36m": "3.91%",
+      "cumulative_prepay_36m": "94.09%",
+      "driver_summary": "Aggressive monetary easing (-150 bps rate shock) inducing massive refinance waves (2.75x hazard), compounding 12M prepay to 77.38% and 36M to 94.09%."
+    }
+  ],
+  "segment_stress_heatmap": [
+    {
+      "segment": "Subprime (FICO <= 620)",
+      "base_loss": "6.8%",
+      "adverse_loss": "16.4%",
+      "prepay_speed": "1.4x",
+      "vulnerability": "HIGH"
+    },
+    {
+      "segment": "High LTV (> 95%)",
+      "base_loss": "4.9%",
+      "adverse_loss": "12.8%",
+      "prepay_speed": "1.8x",
+      "vulnerability": "HIGH"
+    },
+    {
+      "segment": "Elevated DTI (> 45%)",
+      "base_loss": "3.8%",
+      "adverse_loss": "9.4%",
+      "prepay_speed": "1.9x",
+      "vulnerability": "MEDIUM"
+    },
+    {
+      "segment": "Prime Conforming (FICO 740+)",
+      "base_loss": "0.8%",
+      "adverse_loss": "2.1%",
+      "prepay_speed": "3.2x",
+      "vulnerability": "LOW"
+    }
+  ]
+}

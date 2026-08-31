@@ -4,8 +4,9 @@ Intain AI Track — Final Submission Assembler & Strict Format Validator
 
 Covers:
   - Vectorized merger uniting Phase 2 (ML), Phase 3 (Anomaly/Actions), and Phase 4 (TreeSHAP Drivers)
+  - Full-scale (304,374-row) merge completeness assertions
   - Strict schema validation against data/processed/submission_template.csv
-  - Zero-null assertions and probability bound checks
+  - Zero-null assertions, range bounds, and tolerance audits
   - Export of root submission.csv
 """
 
@@ -62,6 +63,25 @@ class SubmissionAssembler:
 
         print(f"    Raw Test rows: {len(df_test):,} | Phase 2 rows: {len(df_p2):,} | "
               f"Phase 3 rows: {len(df_p3):,} | Phase 4 rows: {len(df_p4):,}")
+
+        # Ensure consistent string key formatting
+        for df in [df_test, df_p2, df_p3, df_p4]:
+            df["loan_id"] = df["loan_id"].astype(str).str.strip()
+            df["reporting_month"] = df["reporting_month"].astype(str).str.strip()
+
+        # Full-Scale Merge Completeness Assertions across all rows
+        print("  [SubmissionAssembler] Validating 100% merge completeness across all test rows...")
+        m_p2_test = df_test.merge(df_p2, on=["loan_id", "reporting_month"], how="left", indicator=True)
+        assert (m_p2_test["_merge"] == "both").all(), "Critical: Some test rows failed to match Phase 2 predictions!"
+        assert len(m_p2_test) == len(df_test), "Critical: Phase 2 merge altered row count (duplicate keys detected)!"
+
+        m_p3_test = df_test.merge(df_p3, on=["loan_id", "reporting_month"], how="left", indicator=True)
+        assert (m_p3_test["_merge"] == "both").all(), "Critical: Some test rows failed to match Phase 3 anomaly scores!"
+        assert len(m_p3_test) == len(df_test), "Critical: Phase 3 merge altered row count (duplicate keys detected)!"
+
+        m_p4_test = df_test.merge(df_p4, on=["loan_id", "reporting_month"], how="left", indicator=True)
+        assert (m_p4_test["_merge"] == "both").all(), "Critical: Some test rows failed to match Phase 4 SHAP drivers!"
+        assert len(m_p4_test) == len(df_test), "Critical: Phase 4 merge altered row count (duplicate keys detected)!"
 
         # Base frame: preserve loan_id, reporting_month, month_index
         if "month_index" not in df_test.columns:
@@ -121,10 +141,10 @@ class SubmissionAssembler:
         merged["exception_required"] = (merged.get("exception_required", 0) > 0.5).astype(int)
         merged["exception_type"] = merged["exception_type"].fillna("NONE")
         merged["anomaly_score"] = merged["anomaly_score"].fillna(0.05).clip(0.0, 1.0).round(4)
-        merged["top_driver_1"] = merged["top_driver_1"].fillna("credit_score_ord")
-        merged["top_driver_2"] = merged["top_driver_2"].fillna("dti_ord")
-        merged["top_driver_3"] = merged["top_driver_3"].fillna("ltv_ord")
-        merged["action"] = merged["action"].fillna("PASS")
+        merged["top_driver_1"] = merged["top_driver_1"].fillna("age_x_rate")
+        merged["top_driver_2"] = merged["top_driver_2"].fillna("credit_score_ord")
+        merged["top_driver_3"] = merged["top_driver_3"].fillna("dti_x_ltv")
+        merged["action"] = merged["action"].fillna("AUTO_APPROVE")
 
         # Format confidence to HIGH / MEDIUM / LOW if numeric
         if merged["confidence"].dtype != object:
@@ -140,6 +160,7 @@ class SubmissionAssembler:
         null_count = int(final_df.isnull().sum().sum())
         total_rows = len(final_df)
         assert null_count == 0, f"Validation Failed: {null_count} nulls detected in submission!"
+        assert total_rows == len(df_test), f"Validation Failed: Row count mismatch! Expected {len(df_test)}, got {total_rows}"
         assert list(final_df.columns) == REQUIRED_COLUMNS, "Validation Failed: Column ordering mismatch!"
 
         # Check against template if template exists
@@ -163,3 +184,11 @@ class SubmissionAssembler:
             "mean_anomaly_score": float(final_df["anomaly_score"].mean()),
         }
         return final_df, summary
+
+
+if __name__ == "__main__":
+    assembler = SubmissionAssembler()
+    df, summary = assembler.assemble_and_validate()
+    print("\nAction counts in rebuilt submission.csv:")
+    for act, cnt in summary["action_counts"].items():
+        print(f"  {act}: {cnt:,}")

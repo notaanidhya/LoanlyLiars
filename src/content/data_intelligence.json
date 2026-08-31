@@ -1,0 +1,181 @@
+{
+  "headline_metrics": {
+    "total_records": 712107,
+    "train_records": 407733,
+    "test_records": 304374,
+    "unique_loans": 20000,
+    "derived_features": 44,
+    "batch_dq_score": 93.8,
+    "total_rule_breaches": 31813
+  },
+  "panel_structure": {
+    "train_window": "2019-01 through 2021-06 (30 months)",
+    "test_window": "2021-07 through 2026-06 (60 months)",
+    "split_mechanism": "Calendar-time cutoff with per-loan history lag persistence"
+  },
+  "missingness_profiles": [
+    {
+      "feature": "dti_band",
+      "missing_pct": 2.48,
+      "type": "MCAR",
+      "strategy": "Sentinel -1 masking"
+    },
+    {
+      "feature": "credit_score_band",
+      "missing_pct": 0.35,
+      "type": "MAR",
+      "strategy": "Sentinel -1 masking"
+    },
+    {
+      "feature": "ltv_band",
+      "missing_pct": 0.12,
+      "type": "MAR",
+      "strategy": "Sentinel -1 masking"
+    },
+    {
+      "feature": "servicer_reported_balance",
+      "missing_pct": 94.88,
+      "type": "STRUCTURAL",
+      "strategy": "Reconciliation flag (5.12% active feeds)"
+    },
+    {
+      "feature": "last_updated_at",
+      "missing_pct": 94.88,
+      "type": "STRUCTURAL",
+      "strategy": "Feed staleness evaluator"
+    }
+  ],
+  "drift_summary": [
+    {
+      "feature": "interest_rate",
+      "psi": 0.042,
+      "ks_pvalue": 0.182,
+      "status": "STABLE",
+      "note": "Reflects rate trajectory transition"
+    },
+    {
+      "feature": "current_balance",
+      "psi": 0.038,
+      "ks_pvalue": 0.214,
+      "status": "STABLE",
+      "note": "Amortization drift as cohort seasons"
+    },
+    {
+      "feature": "loan_age_months",
+      "psi": 0.112,
+      "ks_pvalue": 0.001,
+      "status": "EXPECTED_TIME_DRIFT",
+      "note": "Panel aging across chronological holdout"
+    },
+    {
+      "feature": "credit_score_ord",
+      "psi": 0.008,
+      "ks_pvalue": 0.892,
+      "status": "STABLE",
+      "note": "Underwriting quality homogeneous across vintages"
+    },
+    {
+      "feature": "dti_ord",
+      "psi": 0.011,
+      "ks_pvalue": 0.741,
+      "status": "STABLE",
+      "note": "Borrower leverage distribution invariant"
+    }
+  ],
+  "rule_breaches": [
+    {
+      "rule_id": "VR-001",
+      "name": "Balance Surge Ratio",
+      "severity": "CRITICAL",
+      "weight": 0.5,
+      "train_hits": 2841,
+      "test_hits": 1472,
+      "description": "Current balance exceeds 115% of original balance without modification"
+    },
+    {
+      "rule_id": "VR-002",
+      "name": "Status / DPD Consistency",
+      "severity": "HIGH",
+      "weight": 0.35,
+      "train_hits": 1920,
+      "test_hits": 894,
+      "description": "DPD > 0 recorded while status is marked as CURRENT"
+    },
+    {
+      "rule_id": "VR-003",
+      "name": "Origination Date Validity",
+      "severity": "CRITICAL",
+      "weight": 0.5,
+      "train_hits": 812,
+      "test_hits": 341,
+      "description": "Reporting month precedes loan origination month"
+    },
+    {
+      "rule_id": "VR-004",
+      "name": "Remaining Term Sanity",
+      "severity": "HIGH",
+      "weight": 0.35,
+      "train_hits": 3412,
+      "test_hits": 1820,
+      "description": "Remaining term outside realistic boundary [0, 360] months"
+    },
+    {
+      "rule_id": "VR-005",
+      "name": "Prepayment Zero Balance",
+      "severity": "CRITICAL",
+      "weight": 0.5,
+      "train_hits": 1204,
+      "test_hits": 612,
+      "description": "Loan marked as PREPAID maintains active non-zero balance"
+    },
+    {
+      "rule_id": "VR-006",
+      "name": "Document Gap & Note Status",
+      "severity": "MEDIUM",
+      "weight": 0.2,
+      "train_hits": 18450,
+      "test_hits": 12410,
+      "description": "Trailing document gap (Missing Note, Incomplete Income)"
+    },
+    {
+      "rule_id": "VR-007",
+      "name": "Servicer Balance Reconciliation",
+      "severity": "HIGH",
+      "weight": 0.35,
+      "train_hits": 1420,
+      "test_hits": 890,
+      "description": "Primary balance diverges > 5% from secondary servicer report"
+    },
+    {
+      "rule_id": "VR-008",
+      "name": "Servicer Feed Staleness",
+      "severity": "MEDIUM",
+      "weight": 0.2,
+      "train_hits": 1754,
+      "test_hits": 976,
+      "description": "Servicer update timestamp lags reporting month by > 60 days"
+    }
+  ],
+  "dq_distribution": [
+    {
+      "score_bucket": "95-100 (Pristine)",
+      "percentage": 88.4,
+      "count": 269000
+    },
+    {
+      "score_bucket": "85-94 (Minor Gaps)",
+      "percentage": 6.8,
+      "count": 20700
+    },
+    {
+      "score_bucket": "70-84 (Material Warnings)",
+      "percentage": 3.6,
+      "count": 10950
+    },
+    {
+      "score_bucket": "< 70 (Critical Inconsistencies)",
+      "percentage": 1.2,
+      "count": 3724
+    }
+  ]
+}

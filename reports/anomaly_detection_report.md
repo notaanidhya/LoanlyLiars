@@ -1,7 +1,7 @@
 # Anomaly & Exception Intelligence Report
 
 **Intain AI Track 2026 — Phase 3: Anomaly & Exception Detection Engine**  
-**Generated**: 2026-08-30 22:49:07  
+**Generated**: 2026-08-31 18:44:33  
 
 ---
 
@@ -36,10 +36,11 @@ The Anomaly & Exception Engine fuses 4 orthogonal evidence layers to detect cont
 | Reviewer Action | Record Count | Percentage | Mean Confidence | Min Conf | Max Conf |
 | :--- | ---: | ---: | ---: | ---: | ---: |
 | `AUTO_APPROVE` | 284,641 | 93.52% | **0.90** | 0.85 | 0.99 |
-| `REQUEST_CURE` | 14,480 | 4.76% | **0.84** | 0.80 | 0.98 |
+| `REQUEST_CURE` | 9,772 | 3.21% | **0.86** | 0.80 | 0.98 |
+| `OVERRIDE_SERVICER` | 3,164 | 1.04% | **0.81** | 0.80 | 0.98 |
 | `MANUAL_AUDIT` | 2,871 | 0.94% | **0.90** | 0.88 | 0.95 |
 | `ESCALATE_DOC_REVIEW` | 2,264 | 0.74% | **0.93** | 0.88 | 0.95 |
-| `OVERRIDE_SERVICER` | 118 | 0.04% | **0.96** | 0.92 | 0.98 |
+| `ACCEPT_PRIMARY` | 1,662 | 0.55% | **0.95** | 0.95 | 0.95 |
 
 ---
 
@@ -145,47 +146,47 @@ The Anomaly & Exception Engine fuses 4 orthogonal evidence layers to detect cont
 
 ### Action Class: `OVERRIDE_SERVICER` (4 Example Audit Cards)
 
-#### Case #09: Loan `F19Q10014366` (Period: `201905`)
+#### Case #09: Loan `F19Q10006346` (Period: `201902`)
 
-- **Composite Anomaly Score**: `0.2426 / 1.0000` | **Action**: `OVERRIDE_SERVICER` (Confidence: 98%) | **Exception**: `NONE`
-- **Loan Attributes**: Orig Bal: $690,000.00 | Current Bal: $0.00 | Status: `PREPAID` | DPD: `0` | Doc Status: `VERIFIED` | Rem Term: `357m`
-- **Evidence Decomposition**: ML Layer ($w_1 \cdot S_{\text{ML}}$): `0.162` | Rule Layer ($w_2 \cdot S_{\text{rule}}$): `0.000` | Servicer Layer ($w_3 \cdot S_{\text{servicer}}$): `0.081` | DQ Layer ($w_4 \cdot S_{\text{DQ}}$): `0.000`
-- **Top Root Cause Drivers (Mathematical Sum = 0.243)**:
-  1. `ISOLATION_FOREST_OUTLIER (+0.162)`
-  2. `SERVICER_STATUS_CONFLICT (+0.081)`
+- **Composite Anomaly Score**: `0.2076 / 1.0000` | **Action**: `OVERRIDE_SERVICER` (Confidence: 80%) | **Exception**: `SERVICER_CONFLICT`
+- **Loan Attributes**: Orig Bal: $300,000.00 | Current Bal: $299,000.00 | Status: `CURRENT` | DPD: `0` | Doc Status: `VERIFIED` | Rem Term: `239m`
+- **Evidence Decomposition**: ML Layer ($w_1 \cdot S_{\text{ML}}$): `0.046` | Rule Layer ($w_2 \cdot S_{\text{rule}}$): `0.162` | Servicer Layer ($w_3 \cdot S_{\text{servicer}}$): `0.000` | DQ Layer ($w_4 \cdot S_{\text{DQ}}$): `0.000`
+- **Top Root Cause Drivers (Mathematical Sum = 0.208)**:
+  1. `VR-007_SERVICER_BALANCE_DIFF_6PCT (+0.162)`
+  2. `ISOLATION_FOREST_OUTLIER (+0.046)`
   3. `NO_TERTIARY_ISSUE`
 - **Reviewer Audit Note**: *Cross-source servicer status conflict detected against verified primary transaction ledger. Retain primary ledger balance and override servicer record.*
 
-#### Case #10: Loan `F19Q10013120` (Period: `201906`)
+#### Case #10: Loan `F19Q10000960` (Period: `201903`)
 
-- **Composite Anomaly Score**: `0.2653 / 1.0000` | **Action**: `OVERRIDE_SERVICER` (Confidence: 98%) | **Exception**: `NONE`
-- **Loan Attributes**: Orig Bal: $516,000.00 | Current Bal: $0.00 | Status: `PREPAID` | DPD: `0` | Doc Status: `VERIFIED` | Rem Term: `356m`
-- **Evidence Decomposition**: ML Layer ($w_1 \cdot S_{\text{ML}}$): `0.184` | Rule Layer ($w_2 \cdot S_{\text{rule}}$): `0.000` | Servicer Layer ($w_3 \cdot S_{\text{servicer}}$): `0.081` | DQ Layer ($w_4 \cdot S_{\text{DQ}}$): `0.000`
-- **Top Root Cause Drivers (Mathematical Sum = 0.265)**:
-  1. `ISOLATION_FOREST_OUTLIER (+0.184)`
-  2. `SERVICER_STATUS_CONFLICT (+0.081)`
+- **Composite Anomaly Score**: `0.2012 / 1.0000` | **Action**: `OVERRIDE_SERVICER` (Confidence: 80%) | **Exception**: `SERVICER_CONFLICT`
+- **Loan Attributes**: Orig Bal: $256,000.00 | Current Bal: $256,000.00 | Status: `CURRENT` | DPD: `0` | Doc Status: `VERIFIED` | Rem Term: `359m`
+- **Evidence Decomposition**: ML Layer ($w_1 \cdot S_{\text{ML}}$): `0.039` | Rule Layer ($w_2 \cdot S_{\text{rule}}$): `0.162` | Servicer Layer ($w_3 \cdot S_{\text{servicer}}$): `0.000` | DQ Layer ($w_4 \cdot S_{\text{DQ}}$): `0.000`
+- **Top Root Cause Drivers (Mathematical Sum = 0.201)**:
+  1. `VR-007_SERVICER_BALANCE_DIFF_10PCT (+0.162)`
+  2. `ISOLATION_FOREST_OUTLIER (+0.039)`
   3. `NO_TERTIARY_ISSUE`
 - **Reviewer Audit Note**: *Cross-source servicer status conflict detected against verified primary transaction ledger. Retain primary ledger balance and override servicer record.*
 
-#### Case #11: Loan `F19Q10197507` (Period: `201906`)
+#### Case #11: Loan `F19Q10002998` (Period: `201903`)
 
-- **Composite Anomaly Score**: `0.2804 / 1.0000` | **Action**: `OVERRIDE_SERVICER` (Confidence: 98%) | **Exception**: `NONE`
-- **Loan Attributes**: Orig Bal: $256,000.00 | Current Bal: $0.00 | Status: `PREPAID` | DPD: `0` | Doc Status: `VERIFIED` | Rem Term: `358m`
-- **Evidence Decomposition**: ML Layer ($w_1 \cdot S_{\text{ML}}$): `0.199` | Rule Layer ($w_2 \cdot S_{\text{rule}}$): `0.000` | Servicer Layer ($w_3 \cdot S_{\text{servicer}}$): `0.081` | DQ Layer ($w_4 \cdot S_{\text{DQ}}$): `0.000`
-- **Top Root Cause Drivers (Mathematical Sum = 0.280)**:
-  1. `ISOLATION_FOREST_OUTLIER (+0.199)`
-  2. `SERVICER_STATUS_CONFLICT (+0.081)`
+- **Composite Anomaly Score**: `0.2058 / 1.0000` | **Action**: `OVERRIDE_SERVICER` (Confidence: 80%) | **Exception**: `SERVICER_CONFLICT`
+- **Loan Attributes**: Orig Bal: $219,000.00 | Current Bal: $218,000.00 | Status: `CURRENT` | DPD: `0` | Doc Status: `VERIFIED` | Rem Term: `359m`
+- **Evidence Decomposition**: ML Layer ($w_1 \cdot S_{\text{ML}}$): `0.044` | Rule Layer ($w_2 \cdot S_{\text{rule}}$): `0.162` | Servicer Layer ($w_3 \cdot S_{\text{servicer}}$): `0.000` | DQ Layer ($w_4 \cdot S_{\text{DQ}}$): `0.000`
+- **Top Root Cause Drivers (Mathematical Sum = 0.206)**:
+  1. `VR-007_SERVICER_BALANCE_DIFF_14PCT (+0.162)`
+  2. `ISOLATION_FOREST_OUTLIER (+0.044)`
   3. `NO_TERTIARY_ISSUE`
 - **Reviewer Audit Note**: *Cross-source servicer status conflict detected against verified primary transaction ledger. Retain primary ledger balance and override servicer record.*
 
-#### Case #12: Loan `F19Q10015531` (Period: `201907`)
+#### Case #12: Loan `F19Q10007829` (Period: `201903`)
 
-- **Composite Anomaly Score**: `0.2545 / 1.0000` | **Action**: `OVERRIDE_SERVICER` (Confidence: 98%) | **Exception**: `NONE`
-- **Loan Attributes**: Orig Bal: $363,000.00 | Current Bal: $0.00 | Status: `PREPAID` | DPD: `0` | Doc Status: `VERIFIED` | Rem Term: `355m`
-- **Evidence Decomposition**: ML Layer ($w_1 \cdot S_{\text{ML}}$): `0.173` | Rule Layer ($w_2 \cdot S_{\text{rule}}$): `0.000` | Servicer Layer ($w_3 \cdot S_{\text{servicer}}$): `0.081` | DQ Layer ($w_4 \cdot S_{\text{DQ}}$): `0.000`
-- **Top Root Cause Drivers (Mathematical Sum = 0.255)**:
-  1. `ISOLATION_FOREST_OUTLIER (+0.173)`
-  2. `SERVICER_STATUS_CONFLICT (+0.081)`
+- **Composite Anomaly Score**: `0.1842 / 1.0000` | **Action**: `OVERRIDE_SERVICER` (Confidence: 80%) | **Exception**: `SERVICER_CONFLICT`
+- **Loan Attributes**: Orig Bal: $312,000.00 | Current Bal: $312,000.00 | Status: `CURRENT` | DPD: `0` | Doc Status: `VERIFIED` | Rem Term: `359m`
+- **Evidence Decomposition**: ML Layer ($w_1 \cdot S_{\text{ML}}$): `0.022` | Rule Layer ($w_2 \cdot S_{\text{rule}}$): `0.162` | Servicer Layer ($w_3 \cdot S_{\text{servicer}}$): `0.000` | DQ Layer ($w_4 \cdot S_{\text{DQ}}$): `0.000`
+- **Top Root Cause Drivers (Mathematical Sum = 0.184)**:
+  1. `VR-007_SERVICER_BALANCE_DIFF_13PCT (+0.162)`
+  2. `ISOLATION_FOREST_OUTLIER (+0.022)`
   3. `NO_TERTIARY_ISSUE`
 - **Reviewer Audit Note**: *Cross-source servicer status conflict detected against verified primary transaction ledger. Retain primary ledger balance and override servicer record.*
 
@@ -204,29 +205,7 @@ The Anomaly & Exception Engine fuses 4 orthogonal evidence layers to detect cont
   3. `NO_TERTIARY_ISSUE`
 - **Reviewer Audit Note**: *Borrower is in active delinquency roll or status conflict. Request workout agreement, forbearance schedule, or servicer cure timeline.*
 
-#### Case #14: Loan `F19Q10006346` (Period: `201902`)
-
-- **Composite Anomaly Score**: `0.2076 / 1.0000` | **Action**: `REQUEST_CURE` (Confidence: 80%) | **Exception**: `SERVICER_CONFLICT`
-- **Loan Attributes**: Orig Bal: $300,000.00 | Current Bal: $299,000.00 | Status: `CURRENT` | DPD: `0` | Doc Status: `VERIFIED` | Rem Term: `239m`
-- **Evidence Decomposition**: ML Layer ($w_1 \cdot S_{\text{ML}}$): `0.046` | Rule Layer ($w_2 \cdot S_{\text{rule}}$): `0.162` | Servicer Layer ($w_3 \cdot S_{\text{servicer}}$): `0.000` | DQ Layer ($w_4 \cdot S_{\text{DQ}}$): `0.000`
-- **Top Root Cause Drivers (Mathematical Sum = 0.208)**:
-  1. `VR-007_SERVICER_BALANCE_DIFF_6PCT (+0.162)`
-  2. `ISOLATION_FOREST_OUTLIER (+0.046)`
-  3. `NO_TERTIARY_ISSUE`
-- **Reviewer Audit Note**: *Borrower is in active delinquency roll or status conflict. Request workout agreement, forbearance schedule, or servicer cure timeline.*
-
-#### Case #15: Loan `F19Q10000960` (Period: `201903`)
-
-- **Composite Anomaly Score**: `0.2012 / 1.0000` | **Action**: `REQUEST_CURE` (Confidence: 80%) | **Exception**: `SERVICER_CONFLICT`
-- **Loan Attributes**: Orig Bal: $256,000.00 | Current Bal: $256,000.00 | Status: `CURRENT` | DPD: `0` | Doc Status: `VERIFIED` | Rem Term: `359m`
-- **Evidence Decomposition**: ML Layer ($w_1 \cdot S_{\text{ML}}$): `0.039` | Rule Layer ($w_2 \cdot S_{\text{rule}}$): `0.162` | Servicer Layer ($w_3 \cdot S_{\text{servicer}}$): `0.000` | DQ Layer ($w_4 \cdot S_{\text{DQ}}$): `0.000`
-- **Top Root Cause Drivers (Mathematical Sum = 0.201)**:
-  1. `VR-007_SERVICER_BALANCE_DIFF_10PCT (+0.162)`
-  2. `ISOLATION_FOREST_OUTLIER (+0.039)`
-  3. `NO_TERTIARY_ISSUE`
-- **Reviewer Audit Note**: *Borrower is in active delinquency roll or status conflict. Request workout agreement, forbearance schedule, or servicer cure timeline.*
-
-#### Case #16: Loan `F19Q10002275` (Period: `201903`)
+#### Case #14: Loan `F19Q10002275` (Period: `201903`)
 
 - **Composite Anomaly Score**: `0.2144 / 1.0000` | **Action**: `REQUEST_CURE` (Confidence: 80%) | **Exception**: `INVALID_TERM`
 - **Loan Attributes**: Orig Bal: $412,000.00 | Current Bal: $411,000.00 | Status: `CURRENT` | DPD: `0` | Doc Status: `VERIFIED` | Rem Term: `450m`
@@ -237,15 +216,81 @@ The Anomaly & Exception Engine fuses 4 orthogonal evidence layers to detect cont
   3. `NO_TERTIARY_ISSUE`
 - **Reviewer Audit Note**: *Borrower is in active delinquency roll or status conflict. Request workout agreement, forbearance schedule, or servicer cure timeline.*
 
+#### Case #15: Loan `F19Q10003868` (Period: `201903`)
+
+- **Composite Anomaly Score**: `0.3124 / 1.0000` | **Action**: `REQUEST_CURE` (Confidence: 98%) | **Exception**: `STATUS_CONFLICT`
+- **Loan Attributes**: Orig Bal: $70,000.00 | Current Bal: $70,000.00 | Status: `CURRENT` | DPD: `90` | Doc Status: `VERIFIED` | Rem Term: `359m`
+- **Evidence Decomposition**: ML Layer ($w_1 \cdot S_{\text{ML}}$): `0.150` | Rule Layer ($w_2 \cdot S_{\text{rule}}$): `0.162` | Servicer Layer ($w_3 \cdot S_{\text{servicer}}$): `0.000` | DQ Layer ($w_4 \cdot S_{\text{DQ}}$): `0.000`
+- **Top Root Cause Drivers (Mathematical Sum = 0.312)**:
+  1. `VR-002_STATUS_CONFLICT_90DPD (+0.162)`
+  2. `ISOLATION_FOREST_OUTLIER (+0.150)`
+  3. `NO_TERTIARY_ISSUE`
+- **Reviewer Audit Note**: *Borrower is in active delinquency roll or status conflict. Request workout agreement, forbearance schedule, or servicer cure timeline.*
+
+#### Case #16: Loan `F19Q10009654` (Period: `201903`)
+
+- **Composite Anomaly Score**: `0.3749 / 1.0000` | **Action**: `REQUEST_CURE` (Confidence: 98%) | **Exception**: `STATUS_CONFLICT`
+- **Loan Attributes**: Orig Bal: $229,000.00 | Current Bal: $229,000.00 | Status: `CURRENT` | DPD: `90` | Doc Status: `VERIFIED` | Rem Term: `359m`
+- **Evidence Decomposition**: ML Layer ($w_1 \cdot S_{\text{ML}}$): `0.213` | Rule Layer ($w_2 \cdot S_{\text{rule}}$): `0.162` | Servicer Layer ($w_3 \cdot S_{\text{servicer}}$): `0.000` | DQ Layer ($w_4 \cdot S_{\text{DQ}}$): `0.000`
+- **Top Root Cause Drivers (Mathematical Sum = 0.375)**:
+  1. `ISOLATION_FOREST_OUTLIER (+0.213)`
+  2. `VR-002_STATUS_CONFLICT_90DPD (+0.162)`
+  3. `NO_TERTIARY_ISSUE`
+- **Reviewer Audit Note**: *Borrower is in active delinquency roll or status conflict. Request workout agreement, forbearance schedule, or servicer cure timeline.*
+
 ---
 
-### Action Class: `ACCEPT_PRIMARY` (0 Example Audit Cards)
+### Action Class: `ACCEPT_PRIMARY` (4 Example Audit Cards)
+
+#### Case #17: Loan `F19Q10003084` (Period: `201903`)
+
+- **Composite Anomaly Score**: `0.1957 / 1.0000` | **Action**: `ACCEPT_PRIMARY` (Confidence: 95%) | **Exception**: `STALE_RECORD`
+- **Loan Attributes**: Orig Bal: $366,000.00 | Current Bal: $363,000.00 | Status: `CURRENT` | DPD: `0` | Doc Status: `VERIFIED` | Rem Term: `179m`
+- **Evidence Decomposition**: ML Layer ($w_1 \cdot S_{\text{ML}}$): `0.103` | Rule Layer ($w_2 \cdot S_{\text{rule}}$): `0.093` | Servicer Layer ($w_3 \cdot S_{\text{servicer}}$): `0.000` | DQ Layer ($w_4 \cdot S_{\text{DQ}}$): `0.000`
+- **Top Root Cause Drivers (Mathematical Sum = 0.196)**:
+  1. `ISOLATION_FOREST_OUTLIER (+0.103)`
+  2. `VR-008_FEED_STALENESS_EXCEEDS_60D (+0.093)`
+  3. `NO_TERTIARY_ISSUE`
+- **Reviewer Audit Note**: *Minor timing/escrow rounding discrepancy between servicer and primary (< 3%). Accept primary servicing ledger.*
+
+#### Case #18: Loan `F19Q10004199` (Period: `201903`)
+
+- **Composite Anomaly Score**: `0.1850 / 1.0000` | **Action**: `ACCEPT_PRIMARY` (Confidence: 95%) | **Exception**: `STALE_RECORD`
+- **Loan Attributes**: Orig Bal: $70,000.00 | Current Bal: $69,000.00 | Status: `CURRENT` | DPD: `0` | Doc Status: `VERIFIED` | Rem Term: `359m`
+- **Evidence Decomposition**: ML Layer ($w_1 \cdot S_{\text{ML}}$): `0.092` | Rule Layer ($w_2 \cdot S_{\text{rule}}$): `0.093` | Servicer Layer ($w_3 \cdot S_{\text{servicer}}$): `0.000` | DQ Layer ($w_4 \cdot S_{\text{DQ}}$): `0.000`
+- **Top Root Cause Drivers (Mathematical Sum = 0.185)**:
+  1. `VR-008_FEED_STALENESS_EXCEEDS_60D (+0.093)`
+  2. `ISOLATION_FOREST_OUTLIER (+0.092)`
+  3. `NO_TERTIARY_ISSUE`
+- **Reviewer Audit Note**: *Minor timing/escrow rounding discrepancy between servicer and primary (< 3%). Accept primary servicing ledger.*
+
+#### Case #19: Loan `F19Q10005434` (Period: `201903`)
+
+- **Composite Anomaly Score**: `0.2295 / 1.0000` | **Action**: `ACCEPT_PRIMARY` (Confidence: 95%) | **Exception**: `STALE_RECORD`
+- **Loan Attributes**: Orig Bal: $188,000.00 | Current Bal: $188,000.00 | Status: `CURRENT` | DPD: `0` | Doc Status: `VERIFIED` | Rem Term: `359m`
+- **Evidence Decomposition**: ML Layer ($w_1 \cdot S_{\text{ML}}$): `0.137` | Rule Layer ($w_2 \cdot S_{\text{rule}}$): `0.093` | Servicer Layer ($w_3 \cdot S_{\text{servicer}}$): `0.000` | DQ Layer ($w_4 \cdot S_{\text{DQ}}$): `0.000`
+- **Top Root Cause Drivers (Mathematical Sum = 0.230)**:
+  1. `ISOLATION_FOREST_OUTLIER (+0.137)`
+  2. `VR-008_FEED_STALENESS_EXCEEDS_60D (+0.093)`
+  3. `NO_TERTIARY_ISSUE`
+- **Reviewer Audit Note**: *Minor timing/escrow rounding discrepancy between servicer and primary (< 3%). Accept primary servicing ledger.*
+
+#### Case #20: Loan `F19Q10011501` (Period: `201903`)
+
+- **Composite Anomaly Score**: `0.2207 / 1.0000` | **Action**: `ACCEPT_PRIMARY` (Confidence: 95%) | **Exception**: `STALE_RECORD`
+- **Loan Attributes**: Orig Bal: $75,000.00 | Current Bal: $75,000.00 | Status: `CURRENT` | DPD: `0` | Doc Status: `VERIFIED` | Rem Term: `359m`
+- **Evidence Decomposition**: ML Layer ($w_1 \cdot S_{\text{ML}}$): `0.128` | Rule Layer ($w_2 \cdot S_{\text{rule}}$): `0.093` | Servicer Layer ($w_3 \cdot S_{\text{servicer}}$): `0.000` | DQ Layer ($w_4 \cdot S_{\text{DQ}}$): `0.000`
+- **Top Root Cause Drivers (Mathematical Sum = 0.221)**:
+  1. `ISOLATION_FOREST_OUTLIER (+0.128)`
+  2. `VR-008_FEED_STALENESS_EXCEEDS_60D (+0.093)`
+  3. `NO_TERTIARY_ISSUE`
+- **Reviewer Audit Note**: *Minor timing/escrow rounding discrepancy between servicer and primary (< 3%). Accept primary servicing ledger.*
 
 ---
 
 ### Action Class: `AUTO_APPROVE` (4 Example Audit Cards)
 
-#### Case #17: Loan `F19Q10000418` (Period: `201902`)
+#### Case #21: Loan `F19Q10000418` (Period: `201902`)
 
 - **Composite Anomaly Score**: `0.0545 / 1.0000` | **Action**: `AUTO_APPROVE` (Confidence: 96%) | **Exception**: `NONE`
 - **Loan Attributes**: Orig Bal: $247,000.00 | Current Bal: $246,000.00 | Status: `CURRENT` | DPD: `0` | Doc Status: `VERIFIED` | Rem Term: `359m`
@@ -256,7 +301,7 @@ The Anomaly & Exception Engine fuses 4 orthogonal evidence layers to detect cont
   3. `NO_TERTIARY_ISSUE`
 - **Reviewer Audit Note**: *Standard conforming prime loan record. Full data integrity verified across all 4 evidence layers. Automatically approve.*
 
-#### Case #18: Loan `F19Q10001397` (Period: `201903`)
+#### Case #22: Loan `F19Q10001397` (Period: `201903`)
 
 - **Composite Anomaly Score**: `0.1632 / 1.0000` | **Action**: `AUTO_APPROVE` (Confidence: 90%) | **Exception**: `NONE`
 - **Loan Attributes**: Orig Bal: $257,000.00 | Current Bal: $257,000.00 | Status: `CURRENT` | DPD: `0` | Doc Status: `VERIFIED` | Rem Term: `359m`
@@ -267,7 +312,7 @@ The Anomaly & Exception Engine fuses 4 orthogonal evidence layers to detect cont
   3. `NO_TERTIARY_ISSUE`
 - **Reviewer Audit Note**: *Standard conforming prime loan record. Full data integrity verified across all 4 evidence layers. Automatically approve.*
 
-#### Case #19: Loan `F19Q10005590` (Period: `201903`)
+#### Case #23: Loan `F19Q10005590` (Period: `201903`)
 
 - **Composite Anomaly Score**: `0.1590 / 1.0000` | **Action**: `AUTO_APPROVE` (Confidence: 90%) | **Exception**: `NONE`
 - **Loan Attributes**: Orig Bal: $57,000.00 | Current Bal: $57,000.00 | Status: `CURRENT` | DPD: `0` | Doc Status: `VERIFIED` | Rem Term: `359m`
@@ -278,7 +323,7 @@ The Anomaly & Exception Engine fuses 4 orthogonal evidence layers to detect cont
   3. `NO_TERTIARY_ISSUE`
 - **Reviewer Audit Note**: *Standard conforming prime loan record. Full data integrity verified across all 4 evidence layers. Automatically approve.*
 
-#### Case #20: Loan `F19Q10010213` (Period: `201903`)
+#### Case #24: Loan `F19Q10010213` (Period: `201903`)
 
 - **Composite Anomaly Score**: `0.1668 / 1.0000` | **Action**: `AUTO_APPROVE` (Confidence: 90%) | **Exception**: `NONE`
 - **Loan Attributes**: Orig Bal: $325,000.00 | Current Bal: $324,000.00 | Status: `CURRENT` | DPD: `0` | Doc Status: `VERIFIED` | Rem Term: `359m`

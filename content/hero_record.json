@@ -1,0 +1,25 @@
+{
+  "loan_id": "F19Q10021012",
+  "reporting_month": "202603",
+  "original_balance": 50000.0,
+  "current_balance": 34871.67,
+  "interest_rate": 5.25,
+  "credit_score_band": "621-680 (Fair)",
+  "ltv_band": ">95%",
+  "dti_band": "21-30%",
+  "servicer_name": "Pennymac Loan Services, LLC",
+  "current_status": "CURRENT",
+  "days_past_due": 0,
+  "document_status": "VERIFIED",
+  "p_default_12m": 0.0,
+  "p_prepay_12m": 0.0883,
+  "p_delinquency_3m": 0.013,
+  "anomaly_score": 0.1903,
+  "action": "AUTO_APPROVE",
+  "confidence": "HIGH",
+  "top_drivers": [
+    "original_balance",
+    "credit_score_ord",
+    "property_type_enc"
+  ]
+}

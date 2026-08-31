@@ -343,22 +343,27 @@ class ReviewerActionEngine:
         doc_conf = np.where(np.isin(doc_stat[m_doc], ["MISSING_NOTE", "UNVERIFIED_APPRAISAL"]), 0.95, 0.88)
         confidences[m_doc] = np.round(doc_conf, 2)
 
-        # 3. OVERRIDE_SERVICER: Cross-source servicer conflict with verified primary ledger
-        m_override = (~m_audit) & (~m_doc) & (s_serv >= 0.35) & (s_rule == 0)
+        # 3. OVERRIDE_SERVICER: Major cross-source servicer conflict
+        m_override = (~m_audit) & (~m_doc) & ((primary_exc == "SERVICER_CONFLICT") | (s_serv >= 0.35))
         actions[m_override] = "OVERRIDE_SERVICER"
         confidences[m_override] = np.round(0.80 + 0.18 * np.minimum(1.0, s_serv[m_override] / 0.60), 2)
 
-        # 4. REQUEST_CURE: Status conflict or delinquency rolls
-        m_cure = (~m_audit) & (~m_doc) & (~m_override) & ((primary_exc == "STATUS_CONFLICT") | (s_rule > 0))
+        # 4. REQUEST_CURE: Contractual status, term, or severe operational rule breaches
+        m_cure = (~m_audit) & (~m_doc) & (~m_override) & (
+            (primary_exc == "STATUS_CONFLICT") | (primary_exc == "INVALID_TERM") | 
+            (primary_exc == "DATE_INVALID") | (s_rule >= 0.30)
+        )
         actions[m_cure] = "REQUEST_CURE"
         confidences[m_cure] = np.round(0.80 + 0.18 * np.minimum(1.0, dpd[m_cure] / 90.0), 2)
 
-        # 5. ACCEPT_PRIMARY: Minor servicer timing discrepancy
-        m_accept = (~m_audit) & (~m_doc) & (~m_override) & (~m_cure) & (s_serv > 0) & (s_rule == 0)
+        # 5. ACCEPT_PRIMARY: Minor servicer feed staleness (VR-008) or mild timing drift
+        m_accept = (~m_audit) & (~m_doc) & (~m_override) & (~m_cure) & (
+            (primary_exc == "STALE_RECORD") | (s_serv > 0) | (s_rule > 0)
+        )
         actions[m_accept] = "ACCEPT_PRIMARY"
         confidences[m_accept] = np.round(0.80 + 0.15 * (1.0 - np.minimum(1.0, s_serv[m_accept] / 0.35)), 2)
 
-        # 6. AUTO_APPROVE: Conforming prime clean record
+        # 6. AUTO_APPROVE: Conforming clean record
         m_auto = (~m_audit) & (~m_doc) & (~m_override) & (~m_cure) & (~m_accept)
         actions[m_auto] = "AUTO_APPROVE"
         confidences[m_auto] = np.round(0.85 + 0.14 * (1.0 - np.minimum(1.0, s_comp[m_auto] / 0.25)), 2)

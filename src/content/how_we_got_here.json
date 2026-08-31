@@ -1,0 +1,133 @@
+{
+  "debugging_narratives": [
+    {
+      "id": "leakage_calibration",
+      "title": "In-Sample Calibration & Chronological 3-Way Splitting",
+      "assumed": "Fitting isotonic regression on the training set would produce calibrated probabilities across all evaluation slices.",
+      "broke_it": "In-sample overfitting where the calibrator memorized train boundaries, collapsing out-of-sample PR-AUC.",
+      "found_it": "Evaluated reliability curve on held-out temporal slice; discovered distorted probability distributions.",
+      "fixed_it": "Implemented strict 3-way time split: Train 70% (X_tr), Calibration 15% (X_cal), Held-Out Validation 15% (X_val)."
+    },
+    {
+      "id": "terminal_masking",
+      "title": "Terminal Universe Transition Masking (12M Default Audit)",
+      "assumed": "Evaluating all panel rows including pre-existing default / prepaid records produced a 0.9546 ROC-AUC.",
+      "broke_it": "Including terminal-state records allowed the model to memorize already-defaulted states rather than predicting forward transitions.",
+      "found_it": "Audited training universe; found defaulted loans remained in the matrix with static 100% default labels.",
+      "fixed_it": "Implemented Transition-Only Universe Masking: strictly excluded terminal records from training, settling at an honest, non-leaky 0.8595 ROC-AUC / 0.3380 PR-AUC."
+    },
+    {
+      "id": "lag_collapse",
+      "title": "Boundary Inference Lag Collapse & State Persistence",
+      "assumed": "Calling transform on test panel records independently would compute rolling DPD and balance momentum.",
+      "broke_it": "Test cohort start (2021-07) lacked preceding 3-month history, causing NaN lag collapse for all 20,000 loans.",
+      "found_it": "Inspected test set feature matrix; discovered top 5 lag features were 100% NaN at month index 1.",
+      "fixed_it": "Engineered history_tail_df buffer inside FeatureEngineer to seamlessly persist boundary history across splits."
+    },
+    {
+      "id": "weight_calibration",
+      "title": "Mathematical 4-Layer Weight Calibration via Differential Evolution",
+      "assumed": "Equal 25% weights across ML, Rules, Servicer, and DQ layers would optimize anomaly interception.",
+      "broke_it": "Rule breaches and servicer conflicts have asymmetric contractual severity, diluting critical defect signals.",
+      "found_it": "Differential Evolution optimization proved optimal weights: w_Rule=46.3%, w_ML=36.4%, w_Servicer=13.5%, w_DQ=3.8%.",
+      "fixed_it": "Fitted bounded global optimizer solving for maximal Precision-Recall AUC on the training slice."
+    },
+    {
+      "id": "path_compression",
+      "title": "Isolation Forest Directional Path-Length Attribution",
+      "assumed": "Standard TreeSHAP log-odds ranking would correctly isolate multivariate anomaly drivers.",
+      "broke_it": "Isolation Forest anomaly score is inversely proportional to tree path length; naive sorting selected normality-inducing features.",
+      "found_it": "Found waterfall plots highlighting low-risk conforming features as anomaly drivers.",
+      "fixed_it": "Inverted attribution framework: sorted by lowest algebraic path compression (np.argsort(shap, axis=1))."
+    },
+    {
+      "id": "string_escape_bug",
+      "title": "Windows Path Backslash & Python String-Literal Escape Bug",
+      "assumed": "Logging paths like 'src/data/\\builder.py' in text templates was purely cosmetic.",
+      "broke_it": "Python string-literal parsing consumed '\\b' as ASCII \\x08 backspace, stripping the letter 'b' to create 'uilder.py'.",
+      "found_it": "Grep search revealed missing first letters across multiple markdown reports ('uilder.py', 'al_model', 'illna(0)').",
+      "fixed_it": "Standardized on POSIX forward slashes repository-wide and enforced raw string literals (r'''...''')."
+    },
+    {
+      "id": "exception_target_audit",
+      "title": "Operational Rule Reconstruction vs. Behavioral Forecast (exception_required & exception_type)",
+      "assumed": "exception_required (0.9997 ROC-AUC) and exception_type (1.0000 Macro-F1 baseline) were breakthrough classifiers.",
+      "broke_it": "Near-1.0 AUC standing next to 0.86 default and 0.65 prepay indicated deterministic target leakage.",
+      "found_it": "TreeSHAP attribution confirmed 78.7% of weight derived from structural snapshot inputs (maturity_pressure, document_status_enc).",
+      "fixed_it": "Documented transparently that exception targets operate as empirical rule partitioners for instantaneous flags."
+    }
+  ],
+  "accepted_rejected_ai": [
+    {
+      "timestamp": "2026-08-29",
+      "component": "Data Ingestion",
+      "ai_proposal": "Use 2025 single-quarter raw dump",
+      "decision": "REJECTED",
+      "rationale": "2025Q2 lacked multi-year default and prepayment outcomes (only 12 months old). Swapped to 2019 multi-year Freddie Mac benchmark."
+    },
+    {
+      "timestamp": "2026-08-29",
+      "component": "Data Splitting",
+      "ai_proposal": "Random row-level train/val split",
+      "decision": "REJECTED",
+      "rationale": "Problem statement explicitly penalizes random splits across panel data. Enforced strict calendar-time cut with per-loan history lag computation prior to split boundary."
+    },
+    {
+      "timestamp": "2026-08-29",
+      "component": "Data Packaging",
+      "ai_proposal": "Custom 8-file pipeline in src/data/builder.py",
+      "decision": "ACCEPTED",
+      "rationale": "Generates all 8 required files with clean forward target labels and ~5% servicer conflict rate for downstream reconciliation tasks."
+    }
+  ],
+  "code_ownership": [
+    {
+      "module": "src/data/builder.py",
+      "purpose": "Dataset extraction & transformation",
+      "ai_share": "90%",
+      "human_review": "Verified schema alignment with Section 6 and 7, validated no look-ahead target leakage."
+    },
+    {
+      "module": "src/data/feature_engineer.py",
+      "purpose": "Lag persistence & macro features",
+      "ai_share": "85%",
+      "human_review": "Audited boundary lag states and zero-leakage ordinal mappings."
+    },
+    {
+      "module": "src/models/trainer.py",
+      "purpose": "Supervised model training & calibration",
+      "ai_share": "80%",
+      "human_review": "Verified 3-way time-split and Isotonic calibration isolation."
+    },
+    {
+      "module": "src/models/anomaly_engine.py",
+      "purpose": "4-Layer hybrid anomaly arbitrator",
+      "ai_share": "85%",
+      "human_review": "Solved Differential Evolution weights; verified 6-tier precedence."
+    },
+    {
+      "module": "src/llm/reviewer_copilot.py",
+      "purpose": "Grounded reviewer memo generation",
+      "ai_share": "85%",
+      "human_review": "Audited data dictionary lookup and governance banners."
+    },
+    {
+      "module": "src/llm/hallucination_auditor.py",
+      "purpose": "Guardrail audit & rejection catalog",
+      "ai_share": "90%",
+      "human_review": "Verified 4 failure modes against deterministic rule overrides."
+    },
+    {
+      "module": "src/utils/submission_builder.py",
+      "purpose": "Final competition submission assembler",
+      "ai_share": "90%",
+      "human_review": "Enforced 304,374-row schema validation and zero-null assertions."
+    },
+    {
+      "module": "logs/ai_development_log.md",
+      "purpose": "Development trajectory tracking",
+      "ai_share": "85%",
+      "human_review": "Audited for authentic progression and rejected outputs."
+    }
+  ]
+}

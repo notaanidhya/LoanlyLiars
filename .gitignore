@@ -13,9 +13,12 @@ data/**/*.parquet
 *.tsv
 *.txt
 
-# Allow tracking of specific schema & rule definitions
+# Allow tracking of specific schema, rules, and competition submission deliverable
 !data/processed/data_dictionary.md
 !data/processed/validation_rules.json
+!submission.csv
+!submission/*.csv
+!requirements.txt
 !data/**/.gitkeep
 
 # ==========================================
@@ -60,8 +63,9 @@ lib64/
 *.egg
 
 # ==========================================
-# Virtual Environments
+# Virtual Environments & Node Modules
 # ==========================================
+node_modules/
 .venv/
 venv/
 ENV/

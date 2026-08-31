@@ -1,0 +1,199 @@
+/* ==========================================================================
+   Design System Tokens — Loan Performance Intelligence Engine
+   Strict 6-Color Palette, Institutional Typography & Ledger Layout Tokens
+   ========================================================================== */
+
+:root {
+  /* ------------------------------------------------------------------------
+     1. Color Tokens (STRICT 6-COLOR PALETTE — NO OTHER ACCENTS)
+     ------------------------------------------------------------------------ */
+  --ledger-ink: #1C2B39;        /* Primary text, primary dark backgrounds */
+  --ledger-paper: #EDE6D6;      /* Primary light background */
+  --brass: #8A6D3B;             /* Structural accent: rules, active nav state, stamp outlines */
+  --flagged-red: #7A3B32;       /* Reserved exclusively for anomaly/exception/audit/rejected states */
+  --reconciled-green: #3E5C4E;  /* Reserved exclusively for cleared/approved/accepted states */
+  --faint-rule: #B8AE98;        /* Hairlines under tabular data only */
+
+  /* Surface variants derived strictly from the 6 tokens */
+  --paper-subtle: #E4DCCB;
+  --paper-card: #F4EFE4;
+  --ink-muted: #3D4F61;
+  --ink-dim: #607285;
+
+  /* ------------------------------------------------------------------------
+     2. Typography Families & Scale
+     ------------------------------------------------------------------------ */
+  --font-serif: "Fraunces", Georgia, serif;
+  --font-sans: "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", "IBM Plex Mono", Menlo, Consolas, monospace;
+
+  /* Modular Type Scale (1.25 Major Third Ratio) */
+  --text-xs: 0.75rem;     /* 12px */
+  --text-sm: 0.875rem;    /* 14px */
+  --text-base: 1.0rem;    /* 16px */
+  --text-md: 1.125rem;    /* 18px */
+  --text-lg: 1.25rem;     /* 20px */
+  --text-xl: 1.5625rem;   /* 25px */
+  --text-2xl: 1.953rem;   /* 31px */
+  --text-3xl: 2.441rem;   /* 39px */
+  --text-4xl: 3.052rem;   /* 49px */
+
+  /* Line Heights */
+  --leading-tight: 1.15;
+  --leading-snug: 1.35;
+  --leading-normal: 1.6;
+  --leading-loose: 1.8;
+
+  /* ------------------------------------------------------------------------
+     3. Spacing Scale (4px Base Unit)
+     ------------------------------------------------------------------------ */
+  --space-1: 0.25rem;   /* 4px */
+  --space-2: 0.5rem;    /* 8px */
+  --space-3: 0.75rem;   /* 12px */
+  --space-4: 1.0rem;    /* 16px */
+  --space-5: 1.25rem;   /* 20px */
+  --space-6: 1.5rem;    /* 24px */
+  --space-8: 2.0rem;    /* 32px */
+  --space-10: 2.5rem;   /* 40px */
+  --space-12: 3.0rem;   /* 48px */
+  --space-16: 4.0rem;   /* 64px */
+  --space-20: 5.0rem;   /* 80px */
+
+  /* ------------------------------------------------------------------------
+     4. Layout Constraints
+     ------------------------------------------------------------------------ */
+  --site-max-width: 1200px;
+  --margin-col-width: 180px;
+  --content-col-width: 960px;
+  --border-radius-sm: 2px;
+  --border-radius-md: 4px;
+}
+
+/* Base Reset & Core Styles */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  background-color: var(--ledger-paper);
+  color: var(--ledger-ink);
+  font-family: var(--font-sans);
+  line-height: var(--leading-normal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  min-height: 100vh;
+  background-color: var(--ledger-paper);
+  color: var(--ledger-ink);
+  overflow-x: hidden;
+}
+
+/* Typography Defaults */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  color: var(--ledger-ink);
+  line-height: var(--leading-tight);
+}
+
+p, li, blockquote {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  color: var(--ledger-ink);
+}
+
+code, pre, .mono-data, table td.numeric, table th.numeric {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+/* Structural Ledger Table Styles */
+.ledger-table-container {
+  width: 100%;
+  overflow-x: auto;
+  margin: var(--space-6) 0;
+  border-top: 2px solid var(--ledger-ink);
+  border-bottom: 2px solid var(--ledger-ink);
+  background-color: var(--paper-card);
+}
+
+table.ledger-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+  text-align: left;
+}
+
+table.ledger-table th {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: var(--text-xs);
+  letter-spacing: 0.05em;
+  padding: var(--space-3) var(--space-4);
+  color: var(--ledger-ink);
+  border-bottom: 1px solid var(--brass);
+  background-color: var(--paper-subtle);
+}
+
+table.ledger-table td {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--faint-rule);
+  color: var(--ledger-ink);
+}
+
+table.ledger-table tr:last-child td {
+  border-bottom: none;
+}
+
+table.ledger-table td.numeric {
+  text-align: right;
+  font-family: var(--font-mono);
+}
+
+table.ledger-table th.numeric {
+  text-align: right;
+}
+
+/* Stamp Badges (Strictly Reconciled Green or Flagged Red) */
+.stamp-badge {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  padding: var(--space-1) var(--space-3);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border-width: 1.5px;
+  border-style: solid;
+  border-radius: var(--border-radius-sm);
+}
+
+.stamp-badge.approved, .stamp-badge.reconciled, .stamp-badge.accepted {
+  color: var(--reconciled-green);
+  border-color: var(--reconciled-green);
+  background-color: rgba(62, 92, 78, 0.08);
+}
+
+.stamp-badge.audit, .stamp-badge.flagged, .stamp-badge.rejected, .stamp-badge.breach {
+  color: var(--flagged-red);
+  border-color: var(--flagged-red);
+  background-color: rgba(122, 59, 50, 0.08);
+}
+
+.stamp-badge.neutral {
+  color: var(--brass);
+  border-color: var(--brass);
+  background-color: rgba(138, 109, 59, 0.08);
+}
+
+/* Accessibility Focus States */
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible {
+  outline: 2px solid var(--brass);
+  outline-offset: 2px;
+}

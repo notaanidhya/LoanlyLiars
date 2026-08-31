@@ -1,0 +1,264 @@
+{
+  "models": [
+    {
+      "target": "12-Month Default (next_12m_default_flag)",
+      "baseline_model": "Scaled Logistic Regression",
+      "baseline_pr_auc": 0.1622,
+      "baseline_roc_auc": 0.741,
+      "tuned_model": "XGBoost + Isotonic Calibrator",
+      "tuned_pr_auc": 0.338,
+      "tuned_roc_auc": 0.8595,
+      "f1_score": 0.385,
+      "optimal_threshold": 0.22,
+      "brier_score": 0.0273,
+      "key_drivers": [
+        "dpd_3m_mean",
+        "dti_x_ltv",
+        "status_severity",
+        "loan_age_months"
+      ]
+    },
+    {
+      "target": "12-Month Prepayment (next_12m_prepayment_flag)",
+      "baseline_model": "Scaled Logistic Regression",
+      "baseline_pr_auc": 0.3791,
+      "baseline_roc_auc": 0.589,
+      "tuned_model": "XGBoost + Isotonic Calibrator",
+      "tuned_pr_auc": 0.5048,
+      "tuned_roc_auc": 0.6542,
+      "f1_score": 0.5368,
+      "optimal_threshold": 0.26,
+      "brier_score": 0.1943,
+      "key_drivers": [
+        "prepayment_incentive",
+        "market_avg_rate",
+        "credit_score_ord",
+        "rate_spread_to_market"
+      ]
+    },
+    {
+      "target": "3-Month Delinquency (next_3m_delinquency_flag)",
+      "baseline_model": "Scaled Logistic Regression",
+      "baseline_pr_auc": 0.3134,
+      "baseline_roc_auc": 0.7812,
+      "tuned_model": "XGBoost + Isotonic Calibrator",
+      "tuned_pr_auc": 0.6368,
+      "tuned_roc_auc": 0.8916,
+      "f1_score": 0.648,
+      "optimal_threshold": 0.16,
+      "brier_score": 0.0253,
+      "key_drivers": [
+        "days_past_due",
+        "status_severity",
+        "maturity_pressure",
+        "dpd_change_1m"
+      ]
+    },
+    {
+      "target": "6-Month Delinquency (next_6m_delinquency_flag)",
+      "baseline_model": "Scaled Logistic Regression",
+      "baseline_pr_auc": 0.3019,
+      "baseline_roc_auc": 0.7306,
+      "tuned_model": "XGBoost + Isotonic Calibrator",
+      "tuned_pr_auc": 0.5812,
+      "tuned_roc_auc": 0.8827,
+      "f1_score": 0.594,
+      "optimal_threshold": 0.17,
+      "brier_score": 0.0442,
+      "key_drivers": [
+        "dpd_3m_mean",
+        "status_severity",
+        "dti_x_ltv",
+        "current_balance"
+      ]
+    },
+    {
+      "target": "Next State Transition (5-Class Multiclass)",
+      "is_multiclass": true,
+      "baseline_model": "Decision Tree Baseline",
+      "baseline_macro_f1": 0.5765,
+      "tuned_model": "Multi-Class XGBoost",
+      "tuned_macro_f1": 0.6479,
+      "tuned_weighted_f1": 0.9316,
+      "classes": [
+        "CURRENT",
+        "30DPD",
+        "60DPD",
+        "90PLUS_DPD",
+        "PREPAID"
+      ],
+      "key_drivers": [
+        "current_status",
+        "days_past_due",
+        "status_severity",
+        "dpd_change_1m"
+      ]
+    },
+    {
+      "target": "Exception Type Identification (5-Class Multiclass)",
+      "is_multiclass": true,
+      "baseline_model": "Decision Tree Baseline",
+      "baseline_macro_f1": 1.0,
+      "tuned_model": "Multi-Class XGBoost",
+      "tuned_macro_f1": 0.9855,
+      "tuned_weighted_f1": 0.9988,
+      "classes": [
+        "NONE",
+        "BALANCE_INCONSISTENCY",
+        "STATUS_CONFLICT",
+        "DOCUMENT_GAP",
+        "INVALID_TERM"
+      ],
+      "key_drivers": [
+        "maturity_pressure",
+        "document_status_enc",
+        "balance_pct_original",
+        "days_past_due"
+      ]
+    }
+  ],
+  "calibration_curve": [
+    {
+      "bin_midpoint": 0.05,
+      "empirical_fraction": 0.048,
+      "perfect_calibration": 0.05
+    },
+    {
+      "bin_midpoint": 0.15,
+      "empirical_fraction": 0.146,
+      "perfect_calibration": 0.15
+    },
+    {
+      "bin_midpoint": 0.25,
+      "empirical_fraction": 0.252,
+      "perfect_calibration": 0.25
+    },
+    {
+      "bin_midpoint": 0.35,
+      "empirical_fraction": 0.341,
+      "perfect_calibration": 0.35
+    },
+    {
+      "bin_midpoint": 0.45,
+      "empirical_fraction": 0.459,
+      "perfect_calibration": 0.45
+    },
+    {
+      "bin_midpoint": 0.55,
+      "empirical_fraction": 0.548,
+      "perfect_calibration": 0.55
+    },
+    {
+      "bin_midpoint": 0.65,
+      "empirical_fraction": 0.662,
+      "perfect_calibration": 0.65
+    },
+    {
+      "bin_midpoint": 0.75,
+      "empirical_fraction": 0.741,
+      "perfect_calibration": 0.75
+    },
+    {
+      "bin_midpoint": 0.85,
+      "empirical_fraction": 0.854,
+      "perfect_calibration": 0.85
+    },
+    {
+      "bin_midpoint": 0.95,
+      "empirical_fraction": 0.942,
+      "perfect_calibration": 0.95
+    }
+  ],
+  "survival_curves": [
+    {
+      "month": 0,
+      "subprime": 1.0,
+      "fair": 1.0,
+      "good": 1.0,
+      "prime": 1.0
+    },
+    {
+      "month": 6,
+      "subprime": 0.962,
+      "fair": 0.984,
+      "good": 0.995,
+      "prime": 0.999
+    },
+    {
+      "month": 12,
+      "subprime": 0.914,
+      "fair": 0.958,
+      "good": 0.987,
+      "prime": 0.996
+    },
+    {
+      "month": 18,
+      "subprime": 0.871,
+      "fair": 0.932,
+      "good": 0.978,
+      "prime": 0.993
+    },
+    {
+      "month": 24,
+      "subprime": 0.832,
+      "fair": 0.909,
+      "good": 0.969,
+      "prime": 0.99
+    },
+    {
+      "month": 30,
+      "subprime": 0.798,
+      "fair": 0.887,
+      "good": 0.961,
+      "prime": 0.987
+    },
+    {
+      "month": 36,
+      "subprime": 0.765,
+      "fair": 0.865,
+      "good": 0.953,
+      "prime": 0.984
+    }
+  ],
+  "fp_fn_gallery": [
+    {
+      "case_type": "False Positive (High Predicted Risk, Did Not Default)",
+      "loan_id": "F19Q10084192",
+      "pred_prob": "41.2%",
+      "actual_outcome": "CURED (0 DPD)",
+      "root_cause": "Borrower experienced temporary 60 DPD spike during rate shock, but cured within 60 days due to strong equity buffer (LTV <= 60%).",
+      "primary_shap_driver": "status_severity (+1.84), ltv_ord (-0.92)"
+    },
+    {
+      "case_type": "False Negative (Low Predicted Risk, Defaulted)",
+      "loan_id": "F19Q20188941",
+      "pred_prob": "8.4%",
+      "actual_outcome": "DEFAULT (120+ DPD)",
+      "root_cause": "Abrupt catastrophic default with zero trailing 30/60 DPD lead time following sudden regional employment disruption.",
+      "primary_shap_driver": "state_enc (+0.45), credit_score_ord (-1.10)"
+    }
+  ],
+  "exception_required_narrative": {
+    "observed_metric": "ROC-AUC 0.9997 / PR-AUC 0.9964",
+    "initial_appearance": "Seemed like an unusually high performing supervised model",
+    "investigation_method": "TreeSHAP feature importance decomposition on models/exception_required_model.pkl",
+    "findings": [
+      {
+        "feature": "maturity_pressure (remaining_term / age)",
+        "importance": "28.96%",
+        "mechanism": "Captures VR-004 invalid term bounds (>360m)"
+      },
+      {
+        "feature": "document_status_enc",
+        "importance": "26.00%",
+        "mechanism": "Captures VR-006 trailing document gap statuses"
+      },
+      {
+        "feature": "balance_pct_original (current / orig)",
+        "importance": "23.78%",
+        "mechanism": "Captures VR-001 balance surges (>115%)"
+      }
+    ],
+    "conclusion": "78.74% of predictive weight derives from deterministic rule equations in the synthetic generator. It functions as an empirical soft-rule reconstructor for instantaneous data quality flags, distinct from forward-looking behavioral forecasts (12M default at 0.8595 ROC-AUC)."
+  }
+}

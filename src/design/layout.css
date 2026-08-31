@@ -1,0 +1,306 @@
+/* ==========================================================================
+   Design System Layout — Loan Performance Intelligence Engine
+   Header, Wayfinding Ledger Tabs, Margin Column Grid & Footer
+   ========================================================================== */
+
+.app-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--ledger-paper);
+}
+
+/* --------------------------------------------------------------------------
+   Header & Ledger Wayfinding Strip
+   -------------------------------------------------------------------------- */
+.site-header {
+  border-bottom: 2px solid var(--ledger-ink);
+  background-color: var(--ledger-paper);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-top {
+  max-width: var(--site-max-width);
+  margin: 0 auto;
+  padding: var(--space-4) var(--space-6);
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  border-bottom: 1px solid var(--faint-rule);
+}
+
+.site-title {
+  font-family: var(--font-serif);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ledger-ink);
+  text-decoration: none;
+}
+
+.site-subtitle {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--brass);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Ledger Navigation Tabs */
+.wayfinding-nav {
+  max-width: var(--site-max-width);
+  margin: 0 auto;
+  display: flex;
+  overflow-x: auto;
+  padding: 0 var(--space-6);
+  scrollbar-width: thin;
+}
+
+.ledger-tab {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--ink-muted);
+  text-decoration: none;
+  padding: var(--space-3) var(--space-4);
+  white-space: nowrap;
+  border-bottom: 3px solid transparent;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.ledger-tab:hover {
+  color: var(--ledger-ink);
+}
+
+.ledger-tab.active {
+  color: var(--ledger-ink);
+  border-bottom-color: var(--brass);
+  background-color: rgba(138, 109, 59, 0.05);
+}
+
+/* --------------------------------------------------------------------------
+   Core Layout Primitive: Left Margin Context Column + Central Content
+   -------------------------------------------------------------------------- */
+.main-content {
+  flex: 1;
+  max-width: var(--site-max-width);
+  width: 100%;
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-6);
+}
+
+.page-grid {
+  display: grid;
+  grid-template-columns: var(--margin-col-width) 1fr;
+  gap: var(--space-10);
+  align-items: start;
+}
+
+.margin-column {
+  position: sticky;
+  top: 100px;
+  padding-right: var(--space-4);
+  border-right: 1px solid var(--faint-rule);
+}
+
+.margin-section-number {
+  font-family: var(--font-serif);
+  font-size: var(--text-3xl);
+  font-weight: 800;
+  color: var(--brass);
+  line-height: 1;
+  margin-bottom: var(--space-2);
+}
+
+.margin-section-title {
+  font-family: var(--font-serif);
+  font-size: var(--text-md);
+  font-weight: 700;
+  color: var(--ledger-ink);
+  margin-bottom: var(--space-3);
+  line-height: var(--leading-snug);
+}
+
+.margin-running-context {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--ink-muted);
+  line-height: var(--leading-snug);
+}
+
+.margin-nav-links {
+  margin-top: var(--space-6);
+  list-style: none;
+}
+
+.margin-nav-links li {
+  margin-bottom: var(--space-2);
+}
+
+.margin-nav-links a {
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
+  color: var(--ink-dim);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.margin-nav-links a:hover {
+  color: var(--ledger-ink);
+}
+
+.content-column {
+  min-width: 0;
+}
+
+/* Page Header Typography */
+.page-header {
+  margin-bottom: var(--space-8);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--faint-rule);
+}
+
+.page-header h1 {
+  font-size: var(--text-3xl);
+  margin-bottom: var(--space-2);
+}
+
+.page-lead {
+  font-size: var(--text-lg);
+  color: var(--ink-muted);
+  line-height: var(--leading-normal);
+}
+
+/* Card & Section Primitives */
+.ledger-card {
+  background-color: var(--paper-card);
+  border: 1px solid var(--faint-rule);
+  padding: var(--space-6);
+  margin-bottom: var(--space-6);
+  border-radius: var(--border-radius-sm);
+}
+
+.ledger-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: var(--space-4);
+  border-bottom: 1px solid var(--faint-rule);
+  padding-bottom: var(--space-2);
+}
+
+.ledger-card-title {
+  font-family: var(--font-serif);
+  font-size: var(--text-xl);
+  font-weight: 700;
+}
+
+/* Metric Small-Multiple Grid */
+.metrics-small-multiples {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-6);
+  margin: var(--space-6) 0;
+}
+
+.metric-strip {
+  background-color: var(--paper-card);
+  border: 1px solid var(--faint-rule);
+  padding: var(--space-4);
+  border-left: 3px solid var(--brass);
+}
+
+.metric-strip-target {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: var(--text-base);
+  margin-bottom: var(--space-2);
+  color: var(--ledger-ink);
+}
+
+.metric-strip-comparison {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-top: var(--space-3);
+  padding-top: var(--space-2);
+  border-top: 1px dashed var(--faint-rule);
+}
+
+/* Callout Box */
+.ledger-callout {
+  background-color: rgba(138, 109, 59, 0.08);
+  border-left: 3px solid var(--brass);
+  padding: var(--space-5);
+  margin: var(--space-6) 0;
+}
+
+.ledger-callout.flagged {
+  background-color: rgba(122, 59, 50, 0.08);
+  border-left-color: var(--flagged-red);
+}
+
+.ledger-callout-title {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: var(--text-md);
+  margin-bottom: var(--space-2);
+}
+
+/* --------------------------------------------------------------------------
+   Footer
+   -------------------------------------------------------------------------- */
+.site-footer {
+  border-top: 2px solid var(--ledger-ink);
+  background-color: var(--ledger-paper);
+  padding: var(--space-8) var(--space-6);
+  margin-top: auto;
+}
+
+.footer-content {
+  max-width: var(--site-max-width);
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: var(--text-xs);
+  color: var(--ink-muted);
+}
+
+.footer-brand {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: var(--text-sm);
+  color: var(--ledger-ink);
+}
+
+/* --------------------------------------------------------------------------
+   Responsive Breakpoints
+   -------------------------------------------------------------------------- */
+@media (max-width: 900px) {
+  .page-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+
+  .margin-column {
+    position: static;
+    border-right: none;
+    border-bottom: 1px solid var(--faint-rule);
+    padding-right: 0;
+    padding-bottom: var(--space-4);
+  }
+
+  .margin-nav-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+
+  .header-top {
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+}
