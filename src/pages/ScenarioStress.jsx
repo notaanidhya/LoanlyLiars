@@ -108,7 +108,7 @@ export default function ScenarioStress() {
               Competing Hazard Compounding Formulation
             </h4>
             <p style={{ fontSize: 'var(--text-xs)', color: 'var(--ink-muted)', lineHeight: 1.6, margin: 0 }}>
-              In multi-horizon survival forecasting, cumulative prepayment probability over $T=36$ months follows $P(\text{Prepay} \le 36M) = 1 - \prod_{t=1}^{36}(1 - \text{SMM}_t)$. The $2.75\times$ prepayment hazard in the High Prepayment scenario compounds monthly single-month mortality ($\text{SMM}$), causing prepayment to surge non-linearly to <strong>77.38% at 12M</strong> and asymptote to <strong>94.09% at 36M</strong> as the active performing balance pool is rapidly exhausted.
+              In multi-horizon survival forecasting, cumulative prepayment probability over T = 36 months follows the non-linear product formulation: <span className="mono-data" style={{ color: 'var(--ledger-ink)', fontWeight: 600 }}>P(Prepay &le; 36M) = 1 &minus; &prod;<sub>t=1..36</sub> (1 &minus; SMM<sub>t</sub>)</span>. The 2.75&times; prepayment hazard in the High Prepayment scenario compounds monthly single-month mortality (SMM), causing prepayment to surge non-linearly to <strong>77.38% at 12M</strong> and asymptote to <strong>94.09% at 36M</strong> as the active performing balance pool is rapidly exhausted.
             </p>
           </div>
         </section>
