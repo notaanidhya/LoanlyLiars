@@ -1,6 +1,9 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, NavLink, Link } from 'react-router-dom';
 
+// Components
+import ScrollToTop from './components/ScrollToTop';
+
 // Pages
 import Home from './pages/Home';
 import Problem from './pages/Problem';
@@ -25,6 +28,7 @@ export default function App() {
 
   return (
     <Router>
+      <ScrollToTop />
       <div className="app-wrapper">
         {/* Sticky Site Header with Ledger Wayfinding Tabs */}
         <header className="site-header">
