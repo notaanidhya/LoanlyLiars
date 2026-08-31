@@ -89,3 +89,8 @@ htmlcov/
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# ==========================================
+# Hackathon Provided / Unnecessary Files
+# ==========================================
+Intain_AI_Track_Problem_Statement.md
