@@ -12,7 +12,7 @@ Developed for the **Intain Campus FinTech Challenge 2026 (AI Track)**, this plat
 
 ---
 
-## Live Platform & Competition Deliverables
+## Live Platform 
 
 | Deliverable Artifact | Description | Direct Access Link |
 | :--- | :--- | :--- |
