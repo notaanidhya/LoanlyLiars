@@ -310,9 +310,8 @@ npm run dev
 
 ---
 
-## Team & Acknowledgments
 
-Developed by **Team LoanlyLiars** for the **Intain Campus FinTech Challenge 2026 (AI Track)**. Built in alignment with the official benchmark guidelines and loan-level structured finance analytics standards.
+At last checkout these, if you haven't already! :)
 
 - **Live Web Platform**: [https://loanly-liars.vercel.app/](https://loanly-liars.vercel.app/)
 - **Source Code**: [https://github.com/notaanidhya/LoanlyLiars](https://github.com/notaanidhya/LoanlyLiars)
